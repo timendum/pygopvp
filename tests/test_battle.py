@@ -16,6 +16,8 @@ class TestBattle(unittest.TestCase):
         battle.start()
         self.assertEqual(battle.pokemons[0].hp, 68)
         self.assertTrue(battle.pokemons[1].hp <= 0)
+        self.assertEqual(battle.rate(0), 778)
+        self.assertEqual(battle.rate(1), 221)
 
     def test_battle_b(self):
         """Effective type"""

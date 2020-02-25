@@ -254,3 +254,12 @@ class Battle:
             self.perform_turn()
             # self.logs.append(BattleLog.end_turn(self.turn, self.attacker, self.defender))
         # print("\n".join([str(l) for l in self.logs]))
+
+    def rate(self, i: int) -> int:
+        """Rate a pokemon in a battle, same as pvpoke"""
+        pokea = self.pokemons[i]
+        pokeb = self.pokemons[i ^ 1]
+        return floor(
+            (500 * ((pokeb.startHp - pokeb.hp) / pokeb.startHp))
+            + (500 * (pokea.hp / pokea.startHp))
+        )
