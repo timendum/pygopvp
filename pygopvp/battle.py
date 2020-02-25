@@ -48,7 +48,9 @@ WAIT_TURN = FakeMove("Wait")
 
 
 class Battle:
-    __MAX_ENERGY = SETTINGS["maxEnergy"]
+    MAX_ENERGY = SETTINGS["maxEnergy"]
+    TURN_DURATION = int(SETTINGS["turnDurationSeconds"] * 1000)
+    CHARGING_DURATION = 9500
 
     def __init__(self, pokemons: Iterable[Pokemon], shields=1):
         self.pokemons = list(pokemons)
@@ -60,7 +62,7 @@ class Battle:
 
     def reset(self) -> None:
         self.turn = 0
-        self.seconds = 0
+        self.mseconds = 0
         self.shields = list(self.startSchields)
         for pokemon in self.pokemons:
             pokemon.reset()
@@ -110,6 +112,10 @@ class Battle:
             return False
         # TODO: timer
         return True
+
+    @property
+    def seconds(self):
+        return self.mseconds/1000
 
     def decide_move(self, a: int) -> Move:
         b = a ^ 1
@@ -171,13 +177,14 @@ class Battle:
         defender = self.pokemons[b]
         damage = self.calculateDamage(a, move)
         attacker.energy += move.energyDelta
-        attacker.energy = min(attacker.energy, self.__MAX_ENERGY)
+        attacker.energy = min(attacker.energy, self.MAX_ENERGY)
         self.waitTurns[a] = move.waitTurns
         if move.is_fast:
             defender.hp -= min(damage, defender.hp)
             self.logs.append(BL(self).damage(a, move, damage))
             return
         # charged
+        self.mseconds += self.CHARGING_DURATION
         if self.remaining_shields(b) > 0:
             self.consume_shield(b)
             defender.hp -= 1
@@ -249,9 +256,13 @@ class Battle:
             self.perform_move(b, moveb)
 
     def start(self):
-        self.seconds += 5
-        while self._is_valid:
+        self.mseconds += 1000
+        while True:
             self.perform_turn()
+            self.mseconds += self.TURN_DURATION
+            if not self._is_valid:
+                self.mseconds += self.TURN_DURATION
+                break
             # self.logs.append(BattleLog.end_turn(self.turn, self.attacker, self.defender))
         # print("\n".join([str(l) for l in self.logs]))
 

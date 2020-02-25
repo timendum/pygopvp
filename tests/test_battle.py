@@ -18,9 +18,10 @@ class TestBattle(unittest.TestCase):
         self.assertTrue(battle.pokemons[1].hp <= 0)
         self.assertEqual(battle.rate(0), 778)
         self.assertEqual(battle.rate(1), 221)
+        self.assertEqual(battle.seconds, 10)
 
     def test_battle_b(self):
-        """Effective type"""
+        """Effective type + charged"""
         # https://pvpoke.com/battle/1500/arcanine/poliwhirl/11/1-6-0/1-1-0/
         pokemona = Pokemon("ARCANINE", 19, [4, 8, 4], [Move("FIRE_FANG_FAST"), Move("WILD_CHARGE")])
         pokemonb = Pokemon(
@@ -29,6 +30,7 @@ class TestBattle(unittest.TestCase):
         battle = Battle([pokemona, pokemonb])
         battle.start()
         self.assertTrue(battle.pokemons[0].hp <= 0)
+        self.assertEqual(battle.seconds, 55)
 
     def test_battle_c(self):
         """Different fast move timing"""
@@ -41,23 +43,4 @@ class TestBattle(unittest.TestCase):
         battle.start()
         self.assertTrue(battle.pokemons[1].hp <= 0)
         self.assertEqual(battle.pokemons[0].hp, 98)
-
-    def test_battle_d(self):
-        """Different fast move timing and multiple charged"""
-        # https://pvpoke.com/battle/1500/arcanine/maractus/11/1-6-0/0-2-0/
-        pokemona = Pokemon(
-            "PILOSWINE",
-            40,
-            [15, 15, 15],
-            [Move("POWDER_SNOW_FAST"), Move("AVALANCHE"), Move("STONE_EDGE")],
-        )
-        pokemonb = Pokemon(
-            "SAWSBUCK",
-            40,
-            [15, 15, 15],
-            [Move("FEINT_ATTACK_FAST"), Move("SOLAR_BEAM"), Move("MEGAHORN")],
-        )
-        battle = Battle([pokemona, pokemonb])
-        battle.start()
-        self.assertTrue(battle.pokemons[1].hp <= 0)
-        self.assertTrue(109 < battle.pokemons[0].hp < 120)
+        self.assertEqual(battle.seconds, 10)
