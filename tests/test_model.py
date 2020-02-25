@@ -1,0 +1,56 @@
+from math import floor
+import unittest
+
+from pygopvp.model import Pokemon, Move
+
+
+class TestPokemon(unittest.TestCase):
+    def test_properties(self):
+        bulbasaur = Pokemon("BULBASAUR", 15, [15, 13, 14])
+        self.assertEqual(floor(bulbasaur.attack), 68)
+        self.assertEqual(floor(bulbasaur.defense), 64)
+        self.assertEqual(bulbasaur.startHp, 73)
+        self.assertEqual(bulbasaur.cp, 472)
+        rayquaza = Pokemon("RAYQUAZA", 24, [4, 7, 15])
+        self.assertEqual(floor(rayquaza.attack), 188)
+        self.assertEqual(floor(rayquaza.defense), 115)
+        self.assertEqual(rayquaza.startHp, 149)
+        self.assertEqual(rayquaza.cp, 2477)
+        # half level
+        maractus = Pokemon("MARACTUS", 24.5, [3, 14, 11], [None, None])
+        self.assertEqual(maractus.startHp, 126)
+        self.assertEqual(maractus.cp, 1483)
+
+    def test_rapr(self):
+        pokemon = Pokemon("PRIMEAPE", 15, [0, 2, 4], [Move("LOW_KICK_FAST"), Move("CLOSE_COMBAT")])
+        self.assertEqual(
+            repr(pokemon),
+            "Pokemon('PRIMEAPE', 15, [0, 2, 4], [Move('LOW_KICK_FAST'), Move('CLOSE_COMBAT')])",
+        )
+        pokemon = Pokemon(
+            "GROWLITHE",
+            15,
+            [0, 2, 4],
+            [Move("EMBER_FAST"), Move("FLAME_WHEEL"), Move("FLAMETHROWER")],
+        )
+        self.assertEqual(
+            repr(pokemon),
+            "Pokemon('GROWLITHE', 15, [0, 2, 4], [Move('EMBER_FAST'), Move('FLAME_WHEEL'), Move('FLAMETHROWER')])",
+        )
+
+
+class TestMove(unittest.TestCase):
+    def test_properties(self):
+        move = Move("FURY_CUTTER_FAST")
+        self.assertTrue(move.is_fast)
+        self.assertFalse(move.is_charged)
+        move = Move("DARK_PULSE")
+        self.assertFalse(move.is_fast)
+        self.assertTrue(move.is_charged)
+        move = Move("TRANSFORM_FAST")  # corner case, energyDelta = 0
+        self.assertTrue(move.is_fast)
+        self.assertFalse(move.is_charged)
+
+    def test_rapr(self):
+        move = Move("COUNTER_FAST")
+        self.assertEqual(repr(move), "Move('COUNTER_FAST')")
