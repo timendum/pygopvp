@@ -106,7 +106,7 @@ class Battle:
     def _is_valid(self):
         if not all(self.pokemons) or len(self.pokemons) != 2:
             return False
-        if self.pokemons[0].hp <= 1 or self.pokemons[1].hp <= 1:
+        if self.pokemons[0].hp <= 0 or self.pokemons[1].hp <= 0:
             return False
         # TODO: timer
         return True
@@ -174,7 +174,7 @@ class Battle:
         attacker.energy = min(attacker.energy, self.__MAX_ENERGY)
         self.waitTurns[a] = move.waitTurns
         if move.is_fast:
-            defender.hp -= damage
+            defender.hp -= min(damage, defender.hp)
             self.logs.append(BL(self).damage(a, move, damage))
             return
         # charged
@@ -184,7 +184,7 @@ class Battle:
             self.logs.append(BL(self).shield(a, move))
             self.apply_buffs(a, move)
             return
-        defender.hp -= damage
+        defender.hp -= min(damage, defender.hp)
         self.logs.append(BL(self).damage(a, move, damage))
         self.apply_buffs(a, move)
 
