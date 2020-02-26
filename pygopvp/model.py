@@ -268,3 +268,45 @@ class Pokemon(BasePokemon):
         name = name.upper()
         name = name.replace("_ALOLAN", "_ALOLA")
         return Pokemon(name, level, IVs, attaks)
+
+    @property
+    def overallIV(self):
+        return self.startHp * self.attack * self.defense
+
+    @staticmethod
+    def find_max(name: str, targetCP: int, lowerIV=0):
+        best = Pokemon(name, 1, [0, 0, 0])
+        staminaIV = 15
+        while staminaIV >= lowerIV:
+            defenseIV = 15
+            while defenseIV >= lowerIV:
+                attackIV = 15
+                while attackIV >= lowerIV:
+                    targetCPM = pow(
+                        targetCP
+                        * 10
+                        / (
+                            (best.baseAttack + attackIV)
+                            * pow((best.baseDefense + defenseIV), 0.5)
+                            * pow((best.baseStamina + staminaIV), 0.5)
+                        ),
+                        0.5,
+                    )
+                    try:
+                        level = (
+                            next(i for i, cpm in enumerate(Pokemon.CPMS) if cpm >= targetCPM) / 2
+                            - 1
+                        )
+                    except StopIteration:
+                        level = 40
+                    while level <= 40:
+                        pokemon = Pokemon(name, level, [attackIV, defenseIV, staminaIV])
+                        if pokemon.cp > targetCP:
+                            break
+                        if pokemon.overallIV > best.overallIV:
+                            best = pokemon
+                        level += 0.5
+                    attackIV -= 1
+                defenseIV -= 1
+            staminaIV -= 1
+        return best

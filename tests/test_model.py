@@ -38,6 +38,20 @@ class TestPokemon(unittest.TestCase):
             "Pokemon('GROWLITHE', 15, [0, 2, 4], [Move('EMBER_FAST'), Move('FLAME_WHEEL'), Move('FLAMETHROWER')])",
         )
 
+    def test_find_max(self):
+        arcanine = Pokemon.find_max("ARCANINE", 1500)
+        self.assertEqual(arcanine.cp, 1498)
+        self.assertEqual(arcanine.level, 18.5)
+        self.assertEqual(arcanine.attackIV, 0)
+        self.assertEqual(arcanine.defenseIV, 14)
+        self.assertEqual(arcanine.staminaIV, 15)
+        slowbro = Pokemon('SLOWBRO', 40, [12, 14, 15], [None, None])
+        self.assertEqual(slowbro.cp, 2498)
+        self.assertEqual(arcanine.level, 40)
+        self.assertEqual(arcanine.attackIV, 12)
+        self.assertEqual(arcanine.defenseIV, 14)
+        self.assertEqual(arcanine.staminaIV, 15)
+
 
 class TestMove(unittest.TestCase):
     def test_properties(self):
