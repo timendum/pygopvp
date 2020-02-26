@@ -184,7 +184,6 @@ class Pokemon(BasePokemon):
     def __init__(self, name, level: float, IVs: List[int], attaks=[None, None]):
         super().__init__(name)
         self.level = level
-        self.cpm = self.CPMS[int((level - 1) * 2)]
         self.attackIV = IVs[0]
         self.defenseIV = IVs[1]
         self.staminaIV = IVs[2]
@@ -210,6 +209,10 @@ class Pokemon(BasePokemon):
         self.energy = 0
         self.attBuffI = (len(BUFFS["attackBuffMultiplier"]) - 1) >> 1
         self.defBuffI = (len(BUFFS["defenseBuffMultiplier"]) - 1) >> 1
+
+    @property
+    def cpm(self):
+        return self.CPMS[int((self.level - 1) * 2)]
 
     @property
     def attack(self):
@@ -250,7 +253,7 @@ class Pokemon(BasePokemon):
         dummyp = Pokemon(
             self.pokemonId,
             self.level,
-            [self.defenseIV, self.attackIV, self.staminaIV,],  # defense and attack inverted
+            [self.defenseIV, self.attackIV, self.staminaIV],  # defense and attack inverted
             [Move("YAWN_FAST"), Move("FRUSTRATION")],
         )
         dummyp.types = []
