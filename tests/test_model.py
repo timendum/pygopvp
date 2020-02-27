@@ -1,7 +1,15 @@
 from math import floor
 import unittest
 
-from pygopvp.model import Pokemon, Move
+from pygopvp.model import BasePokemon, Pokemon, Move
+from pygopvp.gamemaster import POKEMONS
+
+
+class TestBasePokemon(unittest.TestCase):
+    def test_generate_all(self):
+        pokemons = [BasePokemon(name) for name in POKEMONS]
+        reprs = [repr(pokemon) for pokemon in pokemons]
+        self.assertTrue(len(reprs) > 1)
 
 
 class TestPokemon(unittest.TestCase):
@@ -51,6 +59,14 @@ class TestPokemon(unittest.TestCase):
         self.assertEqual(slowbro.attackIV, 12)
         self.assertEqual(slowbro.defenseIV, 14)
         self.assertEqual(slowbro.staminaIV, 15)
+
+    def test_find_by_cp(self):
+        arcanine = Pokemon.find_by_cp("ARCANINE", 1498)
+        self.assertEqual(arcanine.cp, 1498)
+        mewtwo = Pokemon.find_by_cp("MEWTWO", 3531)
+        self.assertEqual(mewtwo.cp, 3531)
+        impossible = Pokemon.find_by_cp("MEWTWO", 20)
+        self.assertIsNone(impossible)
 
 
 class TestMove(unittest.TestCase):

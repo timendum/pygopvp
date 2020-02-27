@@ -271,12 +271,10 @@ class Pokemon(BasePokemon):
         name = name.replace("_ALOLAN", "_ALOLA")
         return Pokemon(name, level, IVs, attaks)
 
-    @property
-    def overallIV(self):
-        return self.startHp * self.attack * self.defense
-
     @staticmethod
-    def find_max(name: str, targetCP: int, lowerIV=0):
+    def __find_best(
+        name: str, targetCP: int, validator: Callable[["Pokemon", "Pokemon"], bool], lowerIV=0
+    ):
         best = Pokemon(name, 1, [0, 0, 0])
         staminaIV = 15
         while staminaIV >= lowerIV:
@@ -305,10 +303,31 @@ class Pokemon(BasePokemon):
                         pokemon = Pokemon(name, level, [attackIV, defenseIV, staminaIV])
                         if pokemon.cp > targetCP:
                             break
-                        if pokemon.overallIV > best.overallIV:
+                        if validator(pokemon, best):
                             best = pokemon
                         level += 0.5
                     attackIV -= 1
                 defenseIV -= 1
             staminaIV -= 1
         return best
+
+    @staticmethod
+    def find_max(name: str, targetCP: int, lowerIV=0):
+        def validator(pokemon: Pokemon, best: Pokemon) -> bool:
+            return (pokemon.startHp * pokemon.attack * pokemon.defense) > (
+                best.startHp * best.attack * best.defense
+            )
+
+        return Pokemon.__find_best(name, targetCP, validator, lowerIV)
+
+    @staticmethod
+    def find_by_cp(name: str, targetCP: int, lowerIV=0):
+        def validator(pokemon: Pokemon, best: Pokemon) -> bool:
+            return (pokemon.startHp * pokemon.attack * pokemon.defense) > (
+                best.startHp * best.attack * best.defense
+            ) and pokemon.cp == targetCP
+
+        candidate = Pokemon.__find_best(name, targetCP, validator, lowerIV)
+        if candidate.cp == targetCP:
+            return candidate
+        return None
