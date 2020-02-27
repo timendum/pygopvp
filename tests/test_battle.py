@@ -13,7 +13,7 @@ class TestBattle(unittest.TestCase):
             "MARACTUS", 24.5, [3, 14, 11], [Move("POISON_JAB_FAST"), Move("PETAL_BLIZZARD")],
         )
         battle = Battle([pokemona, pokemonb])
-        battle.start()
+        battle.resolve()
         self.assertEqual(battle.pokemons[0].hp, 68)
         self.assertTrue(battle.pokemons[1].hp <= 0)
         self.assertEqual(battle.rate(0), 778)
@@ -28,7 +28,7 @@ class TestBattle(unittest.TestCase):
             "POLIWHIRL", 40, [15, 15, 15], [Move("MUD_SHOT_FAST"), Move("BUBBLE_BEAM")]
         )
         battle = Battle([pokemona, pokemonb])
-        battle.start()
+        battle.resolve()
         self.assertTrue(battle.pokemons[0].hp <= 0)
         self.assertEqual(battle.seconds, 55)
 
@@ -40,7 +40,7 @@ class TestBattle(unittest.TestCase):
             "MARACTUS", 24.5, [3, 14, 11], [Move("BULLET_SEED_FAST"), Move("PETAL_BLIZZARD")],
         )
         battle = Battle([pokemona, pokemonb])
-        battle.start()
+        battle.resolve()
         self.assertTrue(battle.pokemons[1].hp <= 0)
         self.assertEqual(battle.pokemons[0].hp, 98)
         self.assertEqual(battle.seconds, 10)

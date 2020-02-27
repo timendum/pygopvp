@@ -50,10 +50,10 @@ class Move:
     def is_charged(self):
         return not self.is_fast
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "Move({!r})".format(self.moveId)
 
-    def __str__(self):
+    def __str__(self) -> str:
         name = self.moveId
         if "_FAST" in name:
             i = name.find("_FAST")
@@ -96,7 +96,7 @@ class BasePokemon:
         if "type2" in pokemon_data:
             self.types.append(Type(pokemon_data.get("type2")))
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "BasePokemon({!r})".format(self.name)
 
 
@@ -193,7 +193,7 @@ class Pokemon(BasePokemon):
         self.charged = attaks[1:]  # type: List[Move]
         self.reset()
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "Pokemon({!r}, {!r}, {!r}, {!r})".format(
             self.name,
             self.level,
@@ -201,19 +201,19 @@ class Pokemon(BasePokemon):
             [self.fast] + self.charged,
         )
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "{!s}(CP: {}, HP: {}, energy: {})".format(
             self.name.title(), self.cp, self.hp, self.energy
         )
 
-    def reset(self):
+    def reset(self) -> None:
         self.hp = self.startHp
-        self.energy = 0
+        self.energy = 0.0
         self.attBuffI = (len(BUFFS["attackBuffMultiplier"]) - 1) >> 1
         self.defBuffI = (len(BUFFS["defenseBuffMultiplier"]) - 1) >> 1
 
     @property
-    def cpm(self):
+    def cpm(self) -> float:
         return self.CPMS[int((self.level - 1) * 2)]
 
     @property

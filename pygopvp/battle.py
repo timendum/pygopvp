@@ -74,7 +74,6 @@ class Battle:
     def __str__(self):
         return "{!s} vs {!s}".format(self.pokemons[0], self.pokemons[1])
 
-
     def remaining_shields(self, b: int):
         return self.shields[b]
 
@@ -176,7 +175,7 @@ class Battle:
             return sorted(enabled_charged, key=lambda charged: charged.energyDelta)[0]
         return attacker.fast
 
-    def perform_move(self, a: int, move: Move):
+    def perform_move(self, a: int, move: Move) -> None:
         if move == WAIT_TURN:
             return
         b = a ^ 1
@@ -203,13 +202,13 @@ class Battle:
         self.apply_buffs(a, move)
 
     @staticmethod
-    def __calc_buff(start, delta):
+    def __calc_buff(start: int, delta: int) -> int:
         value = start + delta
         value = max(BUFFS["minimumStatStage"], value)
         value = min(BUFFS["maximumStatStage"], value)
         return value
 
-    def apply_buffs(self, a: int, move: Move):
+    def apply_buffs(self, a: int, move: Move) -> None:
         if not move.buffs:
             return
         buff = move.buffs
@@ -231,7 +230,7 @@ class Battle:
                 defender.defBuffI = self.__calc_buff(defender.defBuffI, buff.b_def)
                 self.logs.append(BL(self).buff(b, "defense", buff.b_def))
 
-    def perform_turn(self):
+    def perform_turn(self) -> None:
         if self.pokemons[1].attack > self.pokemons[0].attack:
             a = 1
         else:
@@ -241,11 +240,11 @@ class Battle:
         self.turn += 1
         if self.waitTurns[a] >= 1:
             self.waitTurns[a] -= 1
-            movea = WAIT_TURN
+            movea = WAIT_TURN  # type: Move
         else:
             movea = self.decide_move(a)
         if self.waitTurns[b] >= 1:
-            moveb = WAIT_TURN
+            moveb = WAIT_TURN  # type: Move
             self.waitTurns[b] -= 1
         else:
             moveb = self.decide_move(b)
@@ -262,7 +261,7 @@ class Battle:
         if not b_moved:
             self.perform_move(b, moveb)
 
-    def start(self):
+    def resolve(self) -> None:
         self.mseconds += 1000
         while True:
             self.perform_turn()

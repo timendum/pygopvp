@@ -1,7 +1,7 @@
 import json
 import os
 import pathlib
-from typing import Dict, List, Union
+from typing import Dict, Any
 from urllib.request import urlretrieve
 
 from .utils import Type
@@ -25,7 +25,7 @@ POKEMONS = {}
 MOVES = {}
 EFFECTIVE = {}
 SETTINGS = {}  # type: Dict[str, float]
-BUFFS = {}  # type: Dict[str, Union[int, List[float]]]
+BUFFS: Dict[str, Any] = {}
 
 
 def __data_to_effective(effective_data):
