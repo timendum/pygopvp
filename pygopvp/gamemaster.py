@@ -40,6 +40,7 @@ def __load():
         _update()
     with open(FILEPATH, "rt") as fjson:
         data = json.load(fjson)
+    smeargle_moves = {}
     for item in data["itemTemplates"]:
         if "pokemonSettings" in item:
             pokemon_data = item["pokemonSettings"]
@@ -58,6 +59,9 @@ def __load():
             SETTINGS.update(item["combatSettings"])
         elif item["templateId"] == "COMBAT_STAT_STAGE_SETTINGS":
             BUFFS.update(item["combatStatStageSettings"])
+        elif item["templateId"] == "SMEARGLE_MOVES_SETTINGS":
+            smeargle_moves.update(item["smeargleMovesSettings"])
+    POKEMONS["SMEARGLE"].update(smeargle_moves)
 
 
 __load()
