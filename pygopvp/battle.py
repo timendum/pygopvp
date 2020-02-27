@@ -115,7 +115,7 @@ class Battle:
 
     @property
     def seconds(self):
-        return self.mseconds/1000
+        return self.mseconds / 1000
 
     def decide_move(self, a: int) -> Move:
         b = a ^ 1

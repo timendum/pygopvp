@@ -1,6 +1,6 @@
 import random
 from math import floor, pow
-from typing import List
+from typing import List, Callable
 
 from .gamemaster import BUFFS, MOVES, POKEMONS
 from .utils import Type
@@ -86,16 +86,18 @@ class Move:
 class BasePokemon:
     def __init__(self, name):
         pokemon_data = POKEMONS[name]
-        self.pokemonId = pokemon_data["pokemonId"]
+        self.name = name
         self.types = [Type(pokemon_data.get("type"))]
         self.baseStamina = pokemon_data["stats"]["baseStamina"]
         self.baseAttack = pokemon_data["stats"]["baseAttack"]
         self.baseDefense = pokemon_data["stats"]["baseDefense"]
+        self.rarity = pokemon_data.get("rarity", "").replace("POKEMON_RARITY_", "")
+        self.isTransferable = pokemon_data.get("isTransferable", False)
         if "type2" in pokemon_data:
             self.types.append(Type(pokemon_data.get("type2")))
 
     def __repr__(self):
-        return "BasePokemon({!r})".format(self.pokemonId)
+        return "BasePokemon({!r})".format(self.name)
 
 
 class Pokemon(BasePokemon):
@@ -193,7 +195,7 @@ class Pokemon(BasePokemon):
 
     def __repr__(self):
         return "Pokemon({!r}, {!r}, {!r}, {!r})".format(
-            self.pokemonId,
+            self.name,
             self.level,
             [self.attackIV, self.defenseIV, self.staminaIV],
             [self.fast] + self.charged,
@@ -201,7 +203,7 @@ class Pokemon(BasePokemon):
 
     def __str__(self):
         return "{!s}(hp: {}, att:{}, def: {}, energy: {})".format(
-            self.pokemonId.title(), self.hp, self.attack, self.defense, self.energy
+            self.name.title(), self.hp, self.attack, self.defense, self.energy
         )
 
     def reset(self):
@@ -251,7 +253,7 @@ class Pokemon(BasePokemon):
 
     def generate_dummy(self, tagertHP=0) -> "Pokemon":
         dummyp = Pokemon(
-            self.pokemonId,
+            self.name,
             self.level,
             [self.defenseIV, self.attackIV, self.staminaIV],  # defense and attack inverted
             [Move("YAWN_FAST"), Move("FRUSTRATION")],

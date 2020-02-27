@@ -45,7 +45,7 @@ class TestPokemon(unittest.TestCase):
         self.assertEqual(arcanine.attackIV, 0)
         self.assertEqual(arcanine.defenseIV, 14)
         self.assertEqual(arcanine.staminaIV, 15)
-        slowbro = Pokemon('SLOWBRO', 40, [12, 14, 15], [None, None])
+        slowbro = Pokemon("SLOWBRO", 40, [12, 14, 15], [None, None])
         self.assertEqual(slowbro.cp, 2498)
         self.assertEqual(slowbro.level, 40)
         self.assertEqual(slowbro.attackIV, 12)
