@@ -68,6 +68,13 @@ class Battle:
             pokemon.reset()
         self.logs = [BL(self).start()]
 
+    def __repr__(self):
+        return "Battle({!r}, shields={}".format(self.pokemons, self.startSchields)
+
+    def __str__(self):
+        return "{!s} vs {!s}".format(self.pokemons[0], self.pokemons[1])
+
+
     def remaining_shields(self, b: int):
         return self.shields[b]
 
