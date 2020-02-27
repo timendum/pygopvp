@@ -1,5 +1,5 @@
 from math import floor
-from typing import Iterable
+from typing import Iterable, List
 
 from .gamemaster import EFFECTIVE, SETTINGS, BUFFS
 from .model import Pokemon, Move
@@ -121,7 +121,7 @@ class Battle:
         b = a ^ 1
         attacker = self.pokemons[a]
         defender = self.pokemons[b]
-        enabled_charged = []
+        enabled_charged = []  # type: List[Move]
         for charged in attacker.charged:
             if not charged:
                 continue
@@ -143,11 +143,11 @@ class Battle:
         dpes = [-dpe for dpe in dpes]  # adjust sign
         if dpes[0] == dpes[1]:
             # use the one with less energy
-            enabled_charged = sorted(enabled_charged, key=lambda charged: charged.energyDelta)[0]
+            enabled_charged = sorted(enabled_charged, key=lambda charged: charged.energyDelta)
             if enabled_charged[0].energyDelta == enabled_charged[1].energyDelta:
                 # same energy, check for buff
-                if [charged for charged in enabled_charged if charged.buff] == 1:
-                    return [charged for charged in enabled_charged if charged.buff][0]
+                if [charged for charged in enabled_charged if charged.buffs] == 1:
+                    return [charged for charged in enabled_charged if charged.buffs][0]
             return enabled_charged[0]
         # if most usefull is ready, use it
         if dpes[0] >= dpes[1] and chargeds[0] in enabled_charged:
