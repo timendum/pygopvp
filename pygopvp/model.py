@@ -91,7 +91,7 @@ class BasePokemon:
         self.baseStamina = pokemon_data["stats"]["baseStamina"]
         self.baseAttack = pokemon_data["stats"]["baseAttack"]
         self.baseDefense = pokemon_data["stats"]["baseDefense"]
-        self.rarity = pokemon_data.get("rarity", "").replace("POKEMON_RARITY_", "")
+        self.rarity = pokemon_data.get("rarity", "").replace("POKEMON_RARITY_", "") or None
         self.isTransferable = pokemon_data.get("isTransferable", False)
         if "type2" in pokemon_data:
             self.types.append(Type(pokemon_data.get("type2")))
@@ -202,8 +202,8 @@ class Pokemon(BasePokemon):
         )
 
     def __str__(self):
-        return "{!s}(hp: {}, att:{}, def: {}, energy: {})".format(
-            self.name.title(), self.hp, self.attack, self.defense, self.energy
+        return "{!s}(CP: {}, HP: {}, energy: {})".format(
+            self.name.title(), self.cp, self.hp, self.energy
         )
 
     def reset(self):
@@ -273,8 +273,8 @@ class Pokemon(BasePokemon):
 
     @staticmethod
     def __find_best(
-        name: str, targetCP: int, validator: Callable[["Pokemon", "Pokemon"], bool], lowerIV=0
-    ):
+        name: str, targetCP: int, validator: Callable[["Pokemon", "Pokemon"], bool], lowerIV
+    ) -> "Pokemon":
         best = Pokemon(name, 1, [0, 0, 0])
         staminaIV = 15
         while staminaIV >= lowerIV:
@@ -312,7 +312,7 @@ class Pokemon(BasePokemon):
         return best
 
     @staticmethod
-    def find_max(name: str, targetCP: int, lowerIV=0):
+    def find_max(name: str, targetCP: int, lowerIV=0) -> "Pokemon":
         def validator(pokemon: Pokemon, best: Pokemon) -> bool:
             return (pokemon.startHp * pokemon.attack * pokemon.defense) > (
                 best.startHp * best.attack * best.defense
@@ -321,7 +321,7 @@ class Pokemon(BasePokemon):
         return Pokemon.__find_best(name, targetCP, validator, lowerIV)
 
     @staticmethod
-    def find_by_cp(name: str, targetCP: int, lowerIV=0):
+    def find_by_cp(name: str, targetCP: int, lowerIV=0) -> Optional["Pokemon"]:
         def validator(pokemon: Pokemon, best: Pokemon) -> bool:
             return (pokemon.startHp * pokemon.attack * pokemon.defense) > (
                 best.startHp * best.attack * best.defense
