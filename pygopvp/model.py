@@ -1,6 +1,6 @@
 import random
 from math import floor, pow
-from typing import List, Callable
+from typing import List, Callable, Optional
 
 from .gamemaster import BUFFS, MOVES, POKEMONS
 from .utils import Type
