@@ -64,4 +64,8 @@ def __load():
     POKEMONS["SMEARGLE"].update(smeargle_moves)
 
 
+if __name__ == "__main__":
+    _update()
+    print("Gamemaster updated")
+
 __load()
