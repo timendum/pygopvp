@@ -1,7 +1,7 @@
 import json
 import os
 import pathlib
-from typing import Dict, Any
+from typing import Any, Dict
 from urllib.request import urlretrieve
 
 from .utils import Type

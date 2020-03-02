@@ -1,8 +1,8 @@
 from math import floor
 from typing import Iterable, List
 
-from .gamemaster import EFFECTIVE, SETTINGS, BUFFS
-from .model import Pokemon, Move
+from .gamemaster import BUFFS, EFFECTIVE, SETTINGS
+from .model import Move, Pokemon
 
 
 class BL:
