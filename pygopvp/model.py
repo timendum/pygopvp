@@ -352,9 +352,12 @@ class Pokemon(BasePokemon):
     @staticmethod
     def find_by_cp_level(name: str, targetCP: int, level: float, lowerIV=0) -> Optional["Pokemon"]:
         def validator(pokemon: Pokemon, best: Pokemon) -> bool:
-            return (pokemon.startHp * pokemon.attack * pokemon.defense) > (
-                best.startHp * best.attack * best.defense
-            ) and pokemon.cp == targetCP and pokemon.level == level
+            return (
+                (pokemon.startHp * pokemon.attack * pokemon.defense)
+                > (best.startHp * best.attack * best.defense)
+                and pokemon.cp == targetCP
+                and pokemon.level == level
+            )
 
         candidate = Pokemon.__find_best(name, targetCP, validator, lowerIV)
         if candidate.cp == targetCP:

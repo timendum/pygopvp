@@ -11,6 +11,14 @@ class TestBasePokemon(unittest.TestCase):
         reprs = [repr(pokemon) for pokemon in pokemons]
         self.assertTrue(len(reprs) > 1)
 
+    def test_fail(self):
+        try:
+            BasePokemon("NotAPokemon Name")
+        except Exception as e:
+            self.assertIsInstance(e, KeyError)
+            return
+        self.fail("No exception")
+
 
 class TestPokemon(unittest.TestCase):
     def test_properties(self):
