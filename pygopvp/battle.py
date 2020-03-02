@@ -48,7 +48,7 @@ WAIT_TURN = FakeMove("Wait")
 
 
 class Battle:
-    MAX_ENERGY = SETTINGS["maxEnergy"]
+    MAX_ENERGY = int(SETTINGS["maxEnergy"])
     TURN_DURATION = int(SETTINGS["turnDurationSeconds"] * 1000)
     CHARGING_DURATION = 9500
 

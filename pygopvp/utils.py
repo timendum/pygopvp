@@ -1,4 +1,11 @@
 from enum import Enum
+from typing import List, Tuple
+
+LEAGUES = {
+    "Great": 1500,
+    "Ultra": 2500,
+    "Master": 100000,
+}
 
 
 class Type(Enum):
@@ -23,3 +30,11 @@ class Type(Enum):
     DRAGON = "POKEMON_TYPE_DRAGON"
     DARK = "POKEMON_TYPE_DARK"
     FAIRY = "POKEMON_TYPE_FAIRY"
+
+
+def compatible_leagues(cp: int) -> List[Tuple[str, int]]:
+    """Give a pokemon CP"""
+    leagues = [(k, v) for k, v in LEAGUES.items() if v >= cp]
+    if len(leagues) > 1:
+        leagues = sorted(leagues, key=lambda k: leagues[1])
+    return leagues
