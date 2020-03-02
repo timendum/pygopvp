@@ -289,14 +289,6 @@ class Pokemon(BasePokemon):
         return dummyp
 
     @staticmethod
-    def from_name(name: str, level: float, IVs: List[int], attaks=[None, None]) -> "Pokemon":
-        name = name.replace("-", "_")
-        name = name.replace(" ", "_")
-        name = name.upper()
-        name = name.replace("_ALOLAN", "_ALOLA")
-        return Pokemon(name, level, IVs, attaks)
-
-    @staticmethod
     def __find_best(
         name: str, targetCP: int, validator: Callable[["Pokemon", "Pokemon"], bool], lowerIV
     ) -> "Pokemon":
@@ -351,6 +343,18 @@ class Pokemon(BasePokemon):
             return (pokemon.startHp * pokemon.attack * pokemon.defense) > (
                 best.startHp * best.attack * best.defense
             ) and pokemon.cp == targetCP
+
+        candidate = Pokemon.__find_best(name, targetCP, validator, lowerIV)
+        if candidate.cp == targetCP:
+            return candidate
+        return None
+
+    @staticmethod
+    def find_by_cp_level(name: str, targetCP: int, level: float, lowerIV=0) -> Optional["Pokemon"]:
+        def validator(pokemon: Pokemon, best: Pokemon) -> bool:
+            return (pokemon.startHp * pokemon.attack * pokemon.defense) > (
+                best.startHp * best.attack * best.defense
+            ) and pokemon.cp == targetCP and pokemon.level == level
 
         candidate = Pokemon.__find_best(name, targetCP, validator, lowerIV)
         if candidate.cp == targetCP:

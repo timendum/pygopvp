@@ -24,6 +24,15 @@ def find_export(folder="data"):
         raise FileNotFoundError("No history_*.csv file found in {}".format(folder))
 
 
+def _convert_pokemon_name(name: str) -> str:
+    name = name.replace("-", "_")
+    name = name.replace(" ", "_")
+    name = name.upper()
+    name = name.replace("_ALOLAN", "_ALOLA")
+    name = name.replace("MEWTWO_ARMORED", "MEWTWO_A")
+    return name
+
+
 def read_export(csvfile=None):
     csvfile = csvfile or find_export()
     pokemons = []
@@ -33,8 +42,8 @@ def read_export(csvfile=None):
             if row["Ancestor?"] == "1":
                 continue
             pokemons.append(
-                Pokemon.from_name(
-                    row["Name"],
+                Pokemon(
+                    _convert_pokemon_name(row["Name"]),
                     float(row["Level"]),
                     [
                         int(float(row["ØATT IV"])),
@@ -43,12 +52,20 @@ def read_export(csvfile=None):
                     ],
                 )
             )
+            if pokemons[-1].cp != int(row["CP"]):
+                pokemons[-1] = Pokemon.find_by_cp_level(
+                    _convert_pokemon_name(row["Name"]), int(row["CP"]), float(row["Level"])
+                )
+            if pokemons[-1].cp != int(row["CP"]):
+                print(
+                    "Not found any combination for {}, CP: level:{}".format(
+                        row["Name"], row["CP"], row["Level"],
+                    )
+                )
             if row["Fast move"].strip(" -"):
                 pokemons[-1].fast = Move.fast_from_name(row["Fast move"])
             if row["Special move"].strip(" -"):
                 pokemons[-1].charged = [Move.charged_from_name(row["Special move"])]
                 if row["Special move 2"].strip(" -"):
                     pokemons[-1].charged.append(Move.charged_from_name(row["Special move 2"]))
-            if pokemons[-1].cp != int(row["CP"]):
-                print(row)
     return pokemons
