@@ -41,8 +41,8 @@ def read_export(csvfile=None):
         for row in calcy_reader:
             if row["Ancestor?"] == "1":
                 continue
-            pokemons.append(
-                Pokemon(
+            try:
+                pokemon = Pokemon(
                     _convert_pokemon_name(row["Name"]),
                     float(row["Level"]),
                     [
@@ -51,21 +51,25 @@ def read_export(csvfile=None):
                         int(float(row["ØHP IV"])),
                     ],
                 )
-            )
-            if pokemons[-1].cp != int(row["CP"]):
-                pokemons[-1] = Pokemon.find_by_cp_level(
+            except KeyError:
+                print("Pokemon not in gamemaster: " + row["Name"])
+                continue
+            if not pokemon or pokemon.cp != int(row["CP"]):
+                pokemon = Pokemon.find_by_cp_level(
                     _convert_pokemon_name(row["Name"]), int(row["CP"]), float(row["Level"])
                 )
-            if pokemons[-1].cp != int(row["CP"]):
+            if not pokemon or pokemon.cp != int(row["CP"]):
                 print(
                     "Not found any combination for {}, CP: level:{}".format(
                         row["Name"], row["CP"], row["Level"],
                     )
                 )
+                continue
+            pokemons.append(pokemon)
             if row["Fast move"].strip(" -"):
-                pokemons[-1].fast = Move.fast_from_name(row["Fast move"])
+                pokemon.fast = Move.fast_from_name(row["Fast move"])
             if row["Special move"].strip(" -"):
-                pokemons[-1].charged = [Move.charged_from_name(row["Special move"])]
+                pokemon.charged = [Move.charged_from_name(row["Special move"])]
                 if row["Special move 2"].strip(" -"):
-                    pokemons[-1].charged.append(Move.charged_from_name(row["Special move 2"]))
+                    pokemon.charged.append(Move.charged_from_name(row["Special move 2"]))
     return pokemons
