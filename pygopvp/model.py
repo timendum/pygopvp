@@ -82,6 +82,26 @@ class Move:
             name = "VICE_GRIP"
         return Move(name)
 
+    @staticmethod
+    def best_dpt_moves(fast_names: List[str], charged_name: List[str]) -> List[str]:
+        TURNS = 1000
+        best_dpt = 0
+        best = ["", ""]
+        fasts = [Move(name) for name in fast_names]
+        chargeds = [Move(name) for name in charged_name]
+        for fast in fasts:
+            for charged in chargeds:
+                dpt = fast.power * TURNS / (fast.waitTurns + 1)
+                dpt += (
+                    charged.power
+                    * (fast.energyDelta * TURNS / (fast.waitTurns + 1))
+                    / (-charged.energyDelta)
+                )
+                if dpt > best_dpt:
+                    best_dpt = dpt
+                    best = [fast.moveId, charged.moveId]
+        return best
+
 
 class BasePokemon:
     def __init__(self, name):
@@ -93,11 +113,16 @@ class BasePokemon:
         self.baseDefense = pokemon_data["stats"]["baseDefense"]
         self.rarity = pokemon_data.get("rarity", "").replace("POKEMON_RARITY_", "") or None
         self.isTransferable = pokemon_data.get("isTransferable", False)
+        self.fast_moves = pokemon_data["quickMoves"]
+        self.charged_moves = pokemon_data["cinematicMoves"]
         if "type2" in pokemon_data:
             self.types.append(Type(pokemon_data.get("type2")))
 
     def __repr__(self) -> str:
         return "BasePokemon({!r})".format(self.name)
+
+    def best_dpt_moves(self) -> List[str]:
+        return Move.best_dpt_moves(self.fast_moves, self.charged_moves)
 
 
 class Pokemon(BasePokemon):
