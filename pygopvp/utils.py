@@ -1,11 +1,10 @@
+from collections import namedtuple
 from enum import Enum
-from typing import List, Tuple
+from typing import List
 
-LEAGUES = {
-    "Great": 1500,
-    "Ultra": 2500,
-    "Master": 100000,
-}
+League = namedtuple("League", ["name", "cp"])
+
+LEAGUES = [League("Great", 1500), League("Ultra", 2500), League("Master", 100000)]
 
 
 class Type(Enum):
@@ -32,9 +31,9 @@ class Type(Enum):
     FAIRY = "POKEMON_TYPE_FAIRY"
 
 
-def compatible_leagues(cp: int) -> List[Tuple[str, int]]:
+def compatible_leagues(cp: int) -> List[League]:
     """Give a pokemon CP"""
-    leagues = [(k, v) for k, v in LEAGUES.items() if v >= cp]
+    leagues = [league for league in LEAGUES if league.cp >= cp]
     if len(leagues) > 1:
-        leagues = sorted(leagues, key=lambda k: leagues[1])
+        leagues = sorted(leagues, key=lambda league: league.cp)
     return leagues
