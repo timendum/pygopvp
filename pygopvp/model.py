@@ -80,6 +80,8 @@ class Move:
         name = name.upper()
         if name == "VISE_GRIP":
             name = "VICE_GRIP"
+        elif name == "FUTURE_SIGHT":
+            name = "FUTURESIGHT"
         return Move(name)
 
     @staticmethod
@@ -132,6 +134,7 @@ class BasePokemon:
         name = name.replace("_ALOLAN", "_ALOLA")
         name = name.replace("MEWTWO_ARMORED", "MEWTWO_A")
         return name
+
 
 class Pokemon(BasePokemon):
     CPMS = [
