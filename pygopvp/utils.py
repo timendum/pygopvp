@@ -4,7 +4,7 @@ from typing import List
 
 League = namedtuple("League", ["name", "cp"])
 
-LEAGUES = [League("Great", 1500), League("Ultra", 2500), League("Master", 100000)]
+LEAGUES = [League("Great", 1500), League("Ultra", 2500), League("Master", 10000)]
 
 
 class Type(Enum):
