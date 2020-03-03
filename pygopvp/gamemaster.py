@@ -13,10 +13,7 @@ FILEPATH = os.path.join(DATA_DIR, "GAME_MASTER.json")
 def _update():
     pathlib.Path(DATA_DIR).mkdir(parents=True, exist_ok=True)
     urlretrieve(
-        url=(
-            "https://raw.githubusercontent.com/pokemongo-dev-contrib/pokemongo-game-master/"
-            + "master/versions/latest/GAME_MASTER.json"
-        ),
+        url="https://raw.githubusercontent.com/PokeMiners/game_masters/master/latest/latest.json",
         filename=FILEPATH,
     )
 
@@ -41,7 +38,7 @@ def __load():
     with open(FILEPATH, "rt") as fjson:
         data = json.load(fjson)
     smeargle_moves = {}
-    for item in data["itemTemplates"]:
+    for item in data:
         if "pokemonSettings" in item:
             pokemon_data = item["pokemonSettings"]
             # POKEMON
