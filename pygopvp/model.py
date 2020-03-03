@@ -62,6 +62,11 @@ class Move:
         name = name.title()
         return name
 
+    def __eq__(self, other) -> bool:
+        if not isinstance(other, Move):
+            return False
+        return self.moveId == other.moveId
+
     @staticmethod
     def fast_from_name(name: str) -> "Move":
         name = name.replace("-", " ")
