@@ -130,6 +130,7 @@ class BasePokemon:
     def convert_name(name: str) -> str:
         name = name.replace("-", "_")
         name = name.replace(" ", "_")
+        name = name.replace(".", "")  # Mr. Mimer
         name = name.upper()
         name = name.replace("_ALOLAN", "_ALOLA")
         name = name.replace("MEWTWO_ARMORED", "MEWTWO_A")
