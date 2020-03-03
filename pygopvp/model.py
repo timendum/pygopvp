@@ -124,6 +124,14 @@ class BasePokemon:
     def best_dpt_moves(self) -> List[str]:
         return Move.best_dpt_moves(self.fast_moves, self.charged_moves)
 
+    @staticmethod
+    def convert_name(name: str) -> str:
+        name = name.replace("-", "_")
+        name = name.replace(" ", "_")
+        name = name.upper()
+        name = name.replace("_ALOLAN", "_ALOLA")
+        name = name.replace("MEWTWO_ARMORED", "MEWTWO_A")
+        return name
 
 class Pokemon(BasePokemon):
     CPMS = [

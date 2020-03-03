@@ -24,15 +24,6 @@ def find_export(folder="data"):
         raise FileNotFoundError("No history_*.csv file found in {}".format(folder))
 
 
-def _convert_pokemon_name(name: str) -> str:
-    name = name.replace("-", "_")
-    name = name.replace(" ", "_")
-    name = name.upper()
-    name = name.replace("_ALOLAN", "_ALOLA")
-    name = name.replace("MEWTWO_ARMORED", "MEWTWO_A")
-    return name
-
-
 def read_export(csvfile=None):
     csvfile = csvfile or find_export()
     pokemons = []
@@ -43,7 +34,7 @@ def read_export(csvfile=None):
                 continue
             try:
                 pokemon = Pokemon(
-                    _convert_pokemon_name(row["Name"]),
+                    Pokemon.convert_name(row["Name"]),
                     float(row["Level"]),
                     [
                         int(float(row["ØATT IV"])),
@@ -56,7 +47,7 @@ def read_export(csvfile=None):
                 continue
             if not pokemon or pokemon.cp != int(row["CP"]):
                 pokemon = Pokemon.find_by_cp_level(
-                    _convert_pokemon_name(row["Name"]), int(row["CP"]), float(row["Level"])
+                    Pokemon.convert_name(row["Name"]), int(row["CP"]), float(row["Level"])
                 )
             if not pokemon or pokemon.cp != int(row["CP"]):
                 print(
