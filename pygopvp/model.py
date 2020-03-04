@@ -293,6 +293,14 @@ class Pokemon(BasePokemon):
             10,
         )
 
+    def copy(self) -> "Pokemon":
+        return Pokemon(
+            self.name,
+            self.level,
+            [self.attackIV, self.defenseIV, self.staminaIV],
+            [self.fast] + self.charged,
+        )
+
     def generate_dummy(self, tagertHP=0) -> "Pokemon":
         dummyp = Pokemon(
             self.name,

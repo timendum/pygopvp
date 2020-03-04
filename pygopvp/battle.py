@@ -53,7 +53,7 @@ class Battle:
     CHARGING_DURATION = 9500
 
     def __init__(self, pokemons: Iterable[Pokemon], shields=1):
-        self.pokemons = list(pokemons)
+        self.pokemons = [pokemon.copy() for pokemon in pokemons]
         if isinstance(shields, int):
             shields = [shields, shields]
         self.startSchields = shields
