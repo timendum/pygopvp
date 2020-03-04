@@ -5,6 +5,8 @@ from typing import List, Optional
 
 from .model import Move, Pokemon
 
+DATA_DIR = "data"
+
 
 class CustomDialect(csv.Dialect):
     """Describe the properties of Calcy-IV generated CSV files."""
@@ -16,7 +18,8 @@ class CustomDialect(csv.Dialect):
     quoting = csv.QUOTE_MINIMAL
 
 
-def find_export(folder="data") -> str:
+def find_export(folder=None) -> str:
+    folder = folder or DATA_DIR
     files = glob.glob(os.path.join(folder, "history_*.csv"))
     files = sorted(files, reverse=True)
     if files:
