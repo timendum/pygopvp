@@ -1,6 +1,7 @@
 import csv
 import glob
 import os
+from typing import List, Optional
 
 from .model import Move, Pokemon
 
@@ -15,7 +16,7 @@ class CustomDialect(csv.Dialect):
     quoting = csv.QUOTE_MINIMAL
 
 
-def find_export(folder="data"):
+def find_export(folder="data") -> str:
     files = glob.glob(os.path.join(folder, "history_*.csv"))
     files = sorted(files, reverse=True)
     if files:
@@ -24,7 +25,7 @@ def find_export(folder="data"):
         raise FileNotFoundError("No history_*.csv file found in {}".format(folder))
 
 
-def read_export(csvfile=None):
+def read_export(csvfile=None) -> List[Pokemon]:
     csvfile = csvfile or find_export()
     pokemons = []
     with open(csvfile, newline="", encoding="utf8") as csvfile:
@@ -41,7 +42,7 @@ def read_export(csvfile=None):
                         int(float(row["ØDEF IV"])),
                         int(float(row["ØHP IV"])),
                     ],
-                )
+                )  # type: Optional[Pokemon]
             except KeyError:
                 print("Pokemon not in gamemaster: " + row["Name"])
                 continue
