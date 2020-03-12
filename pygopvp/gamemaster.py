@@ -39,6 +39,10 @@ def __load():
         data = json.load(fjson)
     smeargle_moves = {}
     for item in data:
+        if "templateId" in item:
+            templateId = item["templateId"]
+            item = item["data"]
+            item["templateId"] = templateId
         if "pokemonSettings" in item:
             pokemon_data = item["pokemonSettings"]
             # POKEMON
