@@ -208,6 +208,11 @@ class Battle:
                 return
         if not b_moved:
             self.perform_move(b, moveb)
+        # check for charged and waitTurns
+        if movea.is_charged and moveb.is_fast:
+            self.waitTurns[b] = 0
+        elif moveb.is_charged and movea.is_fast:
+            self.waitTurns[a] = 0
 
     def resolve(self) -> None:
         self.mseconds += 1000
@@ -235,7 +240,7 @@ def _enablet_charged(attacker: Pokemon) -> List[Move]:
     for charged in attacker.charged:
         if not charged:
             continue
-        if attacker.energy > -charged.energyDelta:
+        if attacker.energy >= -charged.energyDelta:
             enabled_charged.append(charged)
     return enabled_charged
 
