@@ -123,58 +123,6 @@ class Battle:
     def seconds(self):
         return self.mseconds / 1000
 
-    def decide_move(self, a: int) -> Move:
-        b = a ^ 1
-        attacker = self.pokemons[a]
-        defender = self.pokemons[b]
-        enabled_charged = []  # type: List[Move]
-        for charged in attacker.charged:
-            if not charged:
-                continue
-            if attacker.energy > -charged.energyDelta:
-                enabled_charged.append(charged)
-        # no available charged
-        if not enabled_charged:
-            return attacker.fast
-        # is a fast move enought to ko?
-        if self.calculateDamage(a, attacker.fast) >= defender.hp:
-            return attacker.fast
-        # at least 1 available charged
-        chargeds = attacker.charged
-        # if poke has only 1 charged, use it
-        if len(chargeds) == 1:
-            return enabled_charged[0]
-        # calculate damage per energy
-        dpes = [self.calculateDamage(a, chargeds[i]) / chargeds[i].energyDelta for i in (0, 1)]
-        dpes = [-dpe for dpe in dpes]  # adjust sign
-        if dpes[0] == dpes[1]:
-            # use the one with less energy
-            enabled_charged = sorted(enabled_charged, key=lambda charged: charged.energyDelta)
-            if enabled_charged[0].energyDelta == enabled_charged[1].energyDelta:
-                # same energy, check for buff
-                if [charged for charged in enabled_charged if charged.buffs] == 1:
-                    return [charged for charged in enabled_charged if charged.buffs][0]
-            return enabled_charged[0]
-        # if most usefull is ready, use it
-        if dpes[0] >= dpes[1] and chargeds[0] in enabled_charged:
-            return chargeds[0]
-        if dpes[1] > dpes[0] and chargeds[1] in enabled_charged:
-            return chargeds[1]
-        # check if poke is going to die
-        dieing = attacker.hp <= self.calculateDamage(b, defender.fast)
-        for dcharged in defender.charged:
-            if defender.energy > -dcharged.energyDelta:
-                dieing = dieing or attacker.hp <= self.calculateDamage(b, dcharged)
-        # if going to die, use the most damage charged
-        if dieing:
-            return sorted(
-                enabled_charged, key=lambda charged: self.calculateDamage(a, charged), reverse=True,
-            )[0]
-        # SHIELD BAITING
-        if self.remaining_shields(b) > 0:
-            return sorted(enabled_charged, key=lambda charged: charged.energyDelta)[0]
-        return attacker.fast
-
     def perform_move(self, a: int, move: Move) -> None:
         if move == WAIT_TURN:
             return
@@ -242,12 +190,12 @@ class Battle:
             self.waitTurns[a] -= 1
             movea = WAIT_TURN  # type: Move
         else:
-            movea = self.decide_move(a)
+            movea = decide_move(self, a)
         if self.waitTurns[b] >= 1:
             moveb = WAIT_TURN  # type: Move
             self.waitTurns[b] -= 1
         else:
-            moveb = self.decide_move(b)
+            moveb = decide_move(self, b)
         b_moved = False
         if moveb.is_charged and movea.is_fast:
             self.perform_move(b, moveb)
@@ -280,3 +228,68 @@ class Battle:
             (500 * ((pokeb.startHp - pokeb.hp) / pokeb.startHp))
             + (500 * (pokea.hp / pokea.startHp))
         )
+
+
+def _enablet_charged(attacker: Pokemon) -> List[Move]:
+    enabled_charged = []  # type: List[Move]
+    for charged in attacker.charged:
+        if not charged:
+            continue
+        if attacker.energy > -charged.energyDelta:
+            enabled_charged.append(charged)
+    return enabled_charged
+
+
+def decide_move(battle: Battle, a: int, consume_shield=True) -> Move:
+    b = a ^ 1
+    attacker = battle.pokemons[a]
+    defender = battle.pokemons[b]
+    # no available charged
+    enabled_charged = _enablet_charged(attacker)
+    if not enabled_charged:
+        return attacker.fast
+    # is a fast move enought to ko?
+    if battle.calculateDamage(a, attacker.fast) >= defender.hp:
+        return attacker.fast
+    # at least 1 available charged
+    chargeds = sorted(attacker.charged, key=lambda charged: charged.energyDelta)
+    # if poke has only 1 charged, use it
+    if len(chargeds) == 1:
+        return enabled_charged[0]
+    if consume_shield:
+        # we want to consume defender shields asap
+        if battle.shields[b] > 0:
+            return enabled_charged[0]
+    best_charged = find_best_charged(battle, a)
+    if attacker.charged[best_charged] in enabled_charged:
+        return attacker.charged[best_charged]
+    # TODO not best charged if attacker can ko before his ko
+    return attacker.fast
+
+
+def find_best_charged(battle: Battle, a: int) -> int:
+    """Find the index of the best charged move for attacker by:
+
+    1. Damage per energy
+    2. Energy use
+    3. With buff"""
+    attacker = battle.pokemons[a]
+    chargeds = attacker.charged
+    # calculate damage per energy
+    dpes = [battle.calculateDamage(a, chargeds[i]) / chargeds[i].energyDelta for i in (0, 1)]
+    dpes = [-dpe for dpe in dpes]  # adjust sign
+    if dpes[0] >= dpes[1]:
+        return 0
+    if dpes[1] > dpes[0]:
+        return 1
+    # use the one with less energy
+    energyes = [-charged.energyDelta for charged in chargeds]
+    if energyes[0] >= energyes[1]:
+        return 0
+    if energyes[1] > energyes[0]:
+        return 1
+    # same energy, check for buff
+    with_buff = [i for i, charged in enumerate(chargeds) if charged.buffs]
+    if len(with_buff) == 1:
+        return with_buff[0]
+    return 0
