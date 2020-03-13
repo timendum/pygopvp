@@ -92,3 +92,12 @@ class TestMove(unittest.TestCase):
     def test_rapr(self):
         move = Move("COUNTER_FAST")
         self.assertEqual(repr(move), "Move('COUNTER_FAST')")
+
+    def test_best_dpt_moves(self):
+        bests = Move.best_dpt_moves(
+            ["STEEL_WING_FAST", "AIR_SLASH_FAST"], ["BRAVE_BIRD", "SKY_ATTACK", "FLASH_CANNON"]
+        )
+        self.assertEqual(len(bests), 3)
+        self.assertEqual(bests[0], "AIR_SLASH_FAST")
+        self.assertEqual(bests[1], "SKY_ATTACK")
+        self.assertEqual(bests[2], "FLASH_CANNON")

@@ -107,6 +107,22 @@ class Move:
                 if dpt > best_dpt:
                     best_dpt = dpt
                     best = [fast.moveId, charged.moveId]
+        # 2nd charged
+        best_dpt = 0
+        best.append("")
+        for fast in fasts:
+            for charged in chargeds:
+                if fast.moveId == best[0] and charged.moveId == best[1]:
+                    continue
+                dpt = fast.power * TURNS / (fast.waitTurns + 1)
+                dpt += (
+                    charged.power
+                    * (fast.energyDelta * TURNS / (fast.waitTurns + 1))
+                    / (-charged.energyDelta)
+                )
+                if dpt > best_dpt:
+                    best_dpt = dpt
+                    best[2] = charged.moveId
         return best
 
 
