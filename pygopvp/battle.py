@@ -268,6 +268,9 @@ def decide_move(battle: Battle, a: int, consume_shield=True) -> Move:
     best_charged = find_best_charged(battle, a)
     if attacker.charged[best_charged] in enabled_charged:
         return attacker.charged[best_charged]
+    # check if attacker is going ko soon
+    if battle.calculateDamage(b, defender.fast) * 2 >= attacker.hp:
+        return enabled_charged[0]
     # TODO not best charged if attacker can ko before his ko
     return attacker.fast
 
