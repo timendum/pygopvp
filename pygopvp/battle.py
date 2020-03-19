@@ -104,6 +104,17 @@ class Battle:
             return SETTINGS["sameTypeAttackBonusMultiplier"]
         return 1
 
+    @staticmethod
+    def calculateBaseMoveDamage(move: Move, attacker: Pokemon):
+        if move.is_fast:
+            attackMultiplier = SETTINGS["fastAttackBonusMultiplier"]
+        else:
+            attackMultiplier = SETTINGS["chargeAttackBonusMultiplier"]
+        if move.type in attacker.types:
+            attackMultiplier *= SETTINGS["sameTypeAttackBonusMultiplier"]
+        damage = move.power * attackMultiplier + 1
+        return damage
+
     def typeMultiplier(self, b: int, move: Move) -> float:
         multiplier = 1
         for ptype in self.pokemons[b].types:

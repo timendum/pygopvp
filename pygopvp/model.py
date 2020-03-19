@@ -67,6 +67,9 @@ class Move:
             return False
         return self.moveId == other.moveId
 
+    def __hash__(self) -> int:
+        return hash(self.moveId)
+
     @staticmethod
     def fast_from_name(name: str) -> "Move":
         name = name.replace("-", " ")
