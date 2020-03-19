@@ -52,18 +52,18 @@ class Battle:
     TURN_DURATION = int(SETTINGS["turnDurationSeconds"] * 1000)
     CHARGING_DURATION = 9500
 
-    def __init__(self, pokemons: Iterable[Pokemon], shields=1):
+    def __init__(self, pokemons: Iterable[Pokemon], shields=(1, 1)):
         self.pokemons = [pokemon.copy() for pokemon in pokemons]
         if isinstance(shields, int):
             shields = [shields, shields]
-        self.startSchields = shields
+        self.startSchields = list(shields)
         self.reset()
         self.waitTurns = [0, 0]
 
     def reset(self) -> None:
         self.turn = 0
         self.mseconds = 0
-        self.shields = list(self.startSchields)
+        self.shields = self.startSchields
         for pokemon in self.pokemons:
             pokemon.reset()
         self.logs = [BL(self).start()]
