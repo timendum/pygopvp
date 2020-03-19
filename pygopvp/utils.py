@@ -2,9 +2,9 @@ from collections import namedtuple
 from enum import Enum
 from typing import List
 
-League = namedtuple("League", ["name", "cp"])
+League = namedtuple("League", ["name", "cp", "lower"])
 
-LEAGUES = [League("Great", 1500), League("Ultra", 2500), League("Master", 10000)]
+LEAGUES = [League("Great", 1500, 1000), League("Ultra", 2500, 2000), League("Master", 10000, 2500)]
 
 
 class Type(Enum):
