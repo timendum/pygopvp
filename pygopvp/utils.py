@@ -61,6 +61,7 @@ __DIRTY = {}
 
 def start_cache():
     cache_file = os.path.join(DATA_DIR, "_cache.json")
+    __CACHE_DATA.clear()
     if os.path.isfile(cache_file):
         with open(cache_file, "r", encoding="utf8") as fp:
             __CACHE_DATA.update(json.load(fp))

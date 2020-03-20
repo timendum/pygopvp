@@ -7,6 +7,7 @@ import pygopvp.utils as utils
 
 class TestUtils(unittest.TestCase):
     def setUp(self):
+        utils.write_cache()  # preserve old cache
         self.temdir = tempfile.TemporaryDirectory()
         self.origin_DATA_DIR = utils.DATA_DIR
         utils.DATA_DIR = self.temdir.name
