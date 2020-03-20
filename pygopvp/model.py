@@ -1,9 +1,9 @@
 import random
 from math import floor, pow
-from typing import Callable, List, Optional
+from typing import Callable, List, Optional, Tuple
 
 from .gamemaster import BUFFS, MOVES, POKEMONS
-from .utils import Type
+from .utils import Type, json_cache, simple_repr, LEAGUES
 
 
 class MoveBuff:
@@ -335,7 +335,9 @@ class Pokemon(BasePokemon):
     @staticmethod
     def __find_best(
         name: str, targetCP: int, validator: Callable[["Pokemon", "Pokemon"], bool], lowerIV
-    ) -> "Pokemon":
+    ) -> Tuple[float, List[int]]:
+        if targetCP == LEAGUES[-1].cp:
+            return (40.0, [15, 15, 15])
         best = Pokemon(name, 1, [0, 0, 0])
         staminaIV = 15
         while staminaIV >= lowerIV:
@@ -359,7 +361,7 @@ class Pokemon(BasePokemon):
                             - 1
                         )
                     except StopIteration:
-                        level = 40
+                        level = 40.0
                     while level <= 40:
                         pokemon = Pokemon(name, level, [attackIV, defenseIV, staminaIV])
                         if pokemon.cp > targetCP:
@@ -370,32 +372,41 @@ class Pokemon(BasePokemon):
                     attackIV -= 1
                 defenseIV -= 1
             staminaIV -= 1
-        return best
+        return (best.level, [best.attackIV, best.defenseIV, best.staminaIV])
 
     @staticmethod
     def find_max(name: str, targetCP: int, lowerIV=0) -> "Pokemon":
-        def validator(pokemon: Pokemon, best: Pokemon) -> bool:
+        @simple_repr
+        def mult_v(pokemon: Pokemon, best: Pokemon) -> bool:
             return (pokemon.startHp * pokemon.attack * pokemon.defense) > (
                 best.startHp * best.attack * best.defense
+            ) or (
+                (pokemon.startHp * pokemon.attack * pokemon.defense)
+                == (best.startHp * best.attack * best.defense)
+                and pokemon.attack > best.attack
             )
 
-        return Pokemon.__find_best(name, targetCP, validator, lowerIV)
+        values = json_cache(Pokemon.__find_best, name, targetCP, mult_v, lowerIV)
+        return Pokemon(name, values[0], values[1])
 
     @staticmethod
     def find_by_cp(name: str, targetCP: int, lowerIV=0) -> Optional["Pokemon"]:
-        def validator(pokemon: Pokemon, best: Pokemon) -> bool:
+        @simple_repr
+        def cp_validator(pokemon: Pokemon, best: Pokemon) -> bool:
             return (pokemon.startHp * pokemon.attack * pokemon.defense) > (
                 best.startHp * best.attack * best.defense
             ) and pokemon.cp == targetCP
 
-        candidate = Pokemon.__find_best(name, targetCP, validator, lowerIV)
+        values = json_cache(Pokemon.__find_best, name, targetCP, cp_validator, lowerIV)
+        candidate = Pokemon(name, values[0], values[1])
         if candidate.cp == targetCP:
             return candidate
         return None
 
     @staticmethod
     def find_by_cp_level(name: str, targetCP: int, level: float, lowerIV=0) -> Optional["Pokemon"]:
-        def validator(pokemon: Pokemon, best: Pokemon) -> bool:
+        @simple_repr
+        def cp_l_v(pokemon: Pokemon, best: Pokemon) -> bool:
             return (
                 (pokemon.startHp * pokemon.attack * pokemon.defense)
                 > (best.startHp * best.attack * best.defense)
@@ -403,7 +414,8 @@ class Pokemon(BasePokemon):
                 and pokemon.level == level
             )
 
-        candidate = Pokemon.__find_best(name, targetCP, validator, lowerIV)
+        values = json_cache(Pokemon.__find_best, name, targetCP, cp_l_v, lowerIV)
+        candidate = Pokemon(name, values[0], values[1])
         if candidate.cp == targetCP:
             return candidate
         return None
