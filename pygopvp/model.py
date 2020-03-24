@@ -2,7 +2,7 @@ import random
 from math import floor, pow
 from typing import Callable, List, Optional, Tuple
 
-from .gamemaster import BUFFS, MOVES, POKEMONS
+from .gamemaster import BUFFS, MOVES, POKEMONS, SETTINGS
 from .utils import Type, json_cache, simple_repr, LEAGUES
 
 
@@ -92,8 +92,13 @@ class Move:
             name = "FUTURESIGHT"
         return Move(name)
 
+    def stab_multiplier(self, types: List[Type]):
+        if self.type in types:
+            return SETTINGS["sameTypeAttackBonusMultiplier"]
+        return 1
+
     @staticmethod
-    def best_dpt_moves(fast_names: List[str], charged_name: List[str]) -> List[str]:
+    def best_dpt_moves(fast_names: List[str], charged_name: List[str], bonusType=[]) -> List[str]:
         TURNS = 1000
         best_dpt = 0
         best = ["", ""]

@@ -89,7 +89,7 @@ class Battle:
         damage = (
             floor(
                 move.power
-                * self.stabMultiplier(a, move)
+                * move.stab_multiplier(self.pokemons[a].types)
                 * (self.pokemons[a].attack / self.pokemons[b].defense)
                 * self.typeMultiplier(b, move)
                 * 0.5
@@ -98,11 +98,6 @@ class Battle:
             + 1
         )
         return damage
-
-    def stabMultiplier(self, a: int, move: Move) -> float:
-        if move.type in self.pokemons[a].types:
-            return SETTINGS["sameTypeAttackBonusMultiplier"]
-        return 1
 
     @staticmethod
     def calculateBaseMoveDamage(move: Move, attacker: Pokemon):
