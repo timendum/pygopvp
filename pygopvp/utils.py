@@ -45,6 +45,8 @@ def compatible_leagues(cp: int) -> List[League]:
 
 
 class simple_repr:
+    """This decorator replace the repr of a function with the function name"""
+
     def __init__(self, func):
         self.func = func
 
@@ -60,6 +62,7 @@ __DIRTY = {}
 
 
 def start_cache():
+    """Current cache will be written and a new cache will start with content from file."""
     cache_file = os.path.join(DATA_DIR, "_cache.json")
     __CACHE_DATA.clear()
     if os.path.isfile(cache_file):
@@ -68,6 +71,7 @@ def start_cache():
 
 
 def json_cache(func, *args, **kwargs) -> Any:
+    """Read content from cache or invoke `func` with `*args` and `**kwargs`"""
     key = "{}.{}:{!r}-{!r}".format(func.__module__, func.__name__, args, kwargs)
     if key in __CACHE_DATA:
         return __CACHE_DATA[key]
@@ -78,6 +82,7 @@ def json_cache(func, *args, **kwargs) -> Any:
 
 
 def write_cache():
+    """Save cache to disk, if needed"""
     cache_file = os.path.join(DATA_DIR, "_cache.json")
     if "value" not in __DIRTY:
         return

@@ -1,5 +1,5 @@
 import random
-from math import floor, pow
+from math import floor, pow as fpow
 from typing import Callable, List, Optional, Tuple
 
 from .gamemaster import BUFFS, MOVES, POKEMONS, SETTINGS
@@ -7,6 +7,8 @@ from .utils import Type, json_cache, simple_repr, LEAGUES
 
 
 class MoveBuff:
+    """A buff inside a move"""
+
     def __init__(self, buff_data):
         self.a_att = buff_data.get("attackerAttackStatStageChange", 0)
         self.a_def = buff_data.get("attackerDefenseStatStageChange", 0)
@@ -19,10 +21,7 @@ class MoveBuff:
         """Simulate a chance, starts random then it depens only of the chance.
 
         It should be stable, quickly convergint to chance"""
-        if self.__next_roll >= 1 - self.chance:
-            activated = True
-        else:
-            activated = False
+        activated = bool(self.__next_roll >= 1 - self.chance)
         self.__next_roll += self.chance
         if self.__next_roll >= 1:
             self.__next_roll -= 1
@@ -30,6 +29,8 @@ class MoveBuff:
 
 
 class Move:
+    """A pokemon Move"""
+
     def __init__(self, name):
         move_data = MOVES[name]
         self.moveId = move_data["uniqueId"]
@@ -72,6 +73,7 @@ class Move:
 
     @staticmethod
     def fast_from_name(name: str) -> "Move":
+        """Return a fast move from a name"""
         name = name.replace("-", " ")
         name = name.replace(" ", "_")
         name = name.upper() + "_FAST"
@@ -83,6 +85,7 @@ class Move:
 
     @staticmethod
     def charged_from_name(name: str) -> "Move":
+        """Return a charged move from a name"""
         name = name.replace("-", " ")
         name = name.replace(" ", "_")
         name = name.upper()
@@ -93,12 +96,14 @@ class Move:
         return Move(name)
 
     def stab_multiplier(self, types: List[Type]):
+        """Return the Same Type Attack Bonus multiplier base on pokemon `types`"""
         if self.type in types:
             return SETTINGS["sameTypeAttackBonusMultiplier"]
         return 1
 
     @staticmethod
-    def best_dpt_moves(fast_names: List[str], charged_name: List[str], bonusType=[]) -> List[str]:
+    def best_dpt_moves(fast_names: List[str], charged_name: List[str], bonusType=()) -> List[str]:
+        """Find the best fast, charged, second charged move name, from a list of move names."""
         TURNS = 1000
         best_dpt = 0
         best = ["", ""]
@@ -136,6 +141,8 @@ class Move:
 
 
 class BasePokemon:
+    """A pokemon template"""
+
     def __init__(self, name):
         pokemon_data = POKEMONS[name]
         self.name = name
@@ -154,6 +161,7 @@ class BasePokemon:
         return "BasePokemon({!r})".format(self.name)
 
     def best_dpt_moves(self) -> List[str]:
+        """Find the best move names for this pokemon"""
         return Move.best_dpt_moves(self.fast_moves, self.charged_moves, self.types)
 
     @staticmethod
@@ -168,6 +176,8 @@ class BasePokemon:
 
 
 class Pokemon(BasePokemon):
+    """A pokemon for battle"""
+
     CPMS = [
         0.094,
         0.135137432,
@@ -250,7 +260,7 @@ class Pokemon(BasePokemon):
         0.79030001,
     ]
 
-    def __init__(self, name, level: float, IVs: List[int], attaks=[None, None]):
+    def __init__(self, name, level: float, IVs: List[int], attaks=(None, None)):
         super().__init__(name)
         self.level = level
         self.attackIV = IVs[0]
@@ -274,6 +284,7 @@ class Pokemon(BasePokemon):
         )
 
     def reset(self) -> None:
+        """Reset a pokemon: HP, energy and reset buffs"""
         self.hp = self.startHp
         self.energy = 0.0
         self.attBuffI = (len(BUFFS["attackBuffMultiplier"]) - 1) >> 1
@@ -309,9 +320,9 @@ class Pokemon(BasePokemon):
             floor(
                 (
                     (self.baseAttack + self.attackIV)
-                    * pow((self.baseDefense + self.defenseIV), 0.5)
-                    * pow((self.baseStamina + self.staminaIV), 0.5)
-                    * pow(self.cpm, 2)
+                    * fpow((self.baseDefense + self.defenseIV), 0.5)
+                    * fpow((self.baseStamina + self.staminaIV), 0.5)
+                    * fpow(self.cpm, 2)
                 )
                 / 10
             ),
@@ -319,24 +330,13 @@ class Pokemon(BasePokemon):
         )
 
     def copy(self) -> "Pokemon":
+        """"Return a copy of this pokemon"""
         return Pokemon(
             self.name,
             self.level,
             [self.attackIV, self.defenseIV, self.staminaIV],
             [self.fast] + self.charged,
         )
-
-    def generate_dummy(self, tagertHP=0) -> "Pokemon":
-        dummyp = Pokemon(
-            self.name,
-            self.level,
-            [self.defenseIV, self.attackIV, self.staminaIV],  # defense and attack inverted
-            [Move("YAWN_FAST"), Move("FRUSTRATION")],
-        )
-        dummyp.types = []
-        if tagertHP:
-            dummyp.staminaIV = tagertHP - dummyp.startHp
-        return dummyp
 
     @staticmethod
     def __find_best(
@@ -351,13 +351,13 @@ class Pokemon(BasePokemon):
             while defenseIV >= lowerIV:
                 attackIV = 15
                 while attackIV >= lowerIV:
-                    targetCPM = pow(
+                    targetCPM = fpow(
                         targetCP
                         * 10
                         / (
                             (best.baseAttack + attackIV)
-                            * pow((best.baseDefense + defenseIV), 0.5)
-                            * pow((best.baseStamina + staminaIV), 0.5)
+                            * fpow((best.baseDefense + defenseIV), 0.5)
+                            * fpow((best.baseStamina + staminaIV), 0.5)
                         ),
                         0.5,
                     )
@@ -382,6 +382,8 @@ class Pokemon(BasePokemon):
 
     @staticmethod
     def find_max(name: str, targetCP: int, lowerIV=0) -> "Pokemon":
+        """Find the best (overall) level/IVs for a pokemon, given a maximum CP"""
+
         @simple_repr
         def mult_v(pokemon: Pokemon, best: Pokemon) -> bool:
             return (pokemon.startHp * pokemon.attack * pokemon.defense) > (
@@ -397,6 +399,8 @@ class Pokemon(BasePokemon):
 
     @staticmethod
     def find_by_cp(name: str, targetCP: int, lowerIV=0) -> Optional["Pokemon"]:
+        """Find the best (overall) level/IVs for a pokemon, given a target CP"""
+
         @simple_repr
         def cp_validator(pokemon: Pokemon, best: Pokemon) -> bool:
             return (pokemon.startHp * pokemon.attack * pokemon.defense) > (
@@ -411,6 +415,8 @@ class Pokemon(BasePokemon):
 
     @staticmethod
     def find_by_cp_level(name: str, targetCP: int, level: float, lowerIV=0) -> Optional["Pokemon"]:
+        """Find the best (overall) level/IVs for a pokemon, given a target CP and level"""
+
         @simple_repr
         def cp_l_v(pokemon: Pokemon, best: Pokemon) -> bool:
             return (
