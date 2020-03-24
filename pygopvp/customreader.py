@@ -21,7 +21,7 @@ def __filepath(cp, section: str) -> str:
     return os.path.join(DATA_DIR, "{}-{}.txt".format(section, cp))
 
 
-def read_export(cp, section="custom") -> List[Pokemon]:
+def read_export(cp, section="custom", top=30) -> List[Pokemon]:
     filepath = __filepath(cp, section)
     with open(filepath, newline="", encoding="utf8") as csvfile:
         csv_reader = csv.reader(csvfile, dialect=CustomDialect())
@@ -43,4 +43,6 @@ def read_export(cp, section="custom") -> List[Pokemon]:
         if row[3] != "none":
             pokemon.charged.append(Move.charged_from_name(row[3]))
         pokemons.append(pokemon)
+        if len(pokemons) >= top:
+            break
     return pokemons
