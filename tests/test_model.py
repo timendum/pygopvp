@@ -2,6 +2,7 @@ from math import floor
 import unittest
 
 from pygopvp.model import BasePokemon, Pokemon, Move
+from pygopvp.utils import Type
 from pygopvp.gamemaster import POKEMONS
 
 
@@ -101,3 +102,15 @@ class TestMove(unittest.TestCase):
         self.assertEqual(bests[0], "AIR_SLASH_FAST")
         self.assertEqual(bests[1], "SKY_ATTACK")
         self.assertEqual(bests[2], "FLASH_CANNON")
+        # simple
+        bests = Move.best_dpt_moves(["LOCK_ON_FAST"], ["FLASH_CANNON", "BODY_SLAM"])
+        self.assertEqual(len(bests), 3)
+        self.assertEqual(bests[0], "LOCK_ON_FAST")
+        self.assertEqual(bests[1], "BODY_SLAM")
+        self.assertEqual(bests[2], "FLASH_CANNON")
+        # with STAB bonus
+        bests = Move.best_dpt_moves(["LOCK_ON_FAST"], ["FLASH_CANNON", "BODY_SLAM"], [Type.STEEL])
+        self.assertEqual(len(bests), 3)
+        self.assertEqual(bests[0], "LOCK_ON_FAST")
+        self.assertEqual(bests[1], "FLASH_CANNON")
+        self.assertEqual(bests[2], "BODY_SLAM")

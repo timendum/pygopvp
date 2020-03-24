@@ -106,9 +106,10 @@ class Move:
         chargeds = [Move(name) for name in charged_name]
         for fast in fasts:
             for charged in chargeds:
-                dpt = fast.power * TURNS / (fast.waitTurns + 1)
+                dpt = fast.power * TURNS * fast.stab_multiplier(bonusType) / (fast.waitTurns + 1)
                 dpt += (
                     charged.power
+                    * charged.stab_multiplier(bonusType)
                     * (fast.energyDelta * TURNS / (fast.waitTurns + 1))
                     / (-charged.energyDelta)
                 )
@@ -153,7 +154,7 @@ class BasePokemon:
         return "BasePokemon({!r})".format(self.name)
 
     def best_dpt_moves(self) -> List[str]:
-        return Move.best_dpt_moves(self.fast_moves, self.charged_moves)
+        return Move.best_dpt_moves(self.fast_moves, self.charged_moves, self.types)
 
     @staticmethod
     def convert_name(name: str) -> str:
