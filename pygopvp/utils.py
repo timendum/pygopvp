@@ -35,6 +35,9 @@ class Type(Enum):
     DARK = "POKEMON_TYPE_DARK"
     FAIRY = "POKEMON_TYPE_FAIRY"
 
+    def __str__(self):
+        return self.name.title()
+
 
 def compatible_leagues(cp: int) -> List[League]:
     """Give a pokemon CP"""
