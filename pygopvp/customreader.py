@@ -28,16 +28,18 @@ def read_export(cp, section="custom", top=30) -> List[Pokemon]:
         rows = [row for row in csv_reader]
     pokemons = []
     for row in rows:
-        row = row + ["40", "15", "15", "15"]
-        try:
-            pokemon = Pokemon(
-                Pokemon.convert_name(row[0]),
-                float(row[4]),
-                [int(float(row[5])), int(float(row[6])), int(float(row[7]))],
-            )
-        except KeyError:
-            print("Pokemon not in gamemaster: " + row[0])
-            continue
+        if len(row) > 4:
+            try:
+                pokemon = Pokemon(
+                    Pokemon.convert_name(row[0]),
+                    float(row[4]),
+                    [int(float(row[5])), int(float(row[6])), int(float(row[7]))],
+                )
+            except KeyError:
+                print("Pokemon not in gamemaster: " + row[0])
+                continue
+        else:
+            pokemon = Pokemon.find_max(Pokemon.convert_name(row[0]), cp)
         pokemon.fast = Move.fast_from_name(row[1])
         pokemon.charged = [Move.charged_from_name(row[2])]
         if row[3] != "none":
