@@ -125,6 +125,8 @@ class Move:
         best_dpt = 0
         best.append("")
         for fast in fasts:
+            if fast.moveId != best[0]:
+                continue
             for charged in chargeds:
                 if fast.moveId == best[0] and charged.moveId == best[1]:
                     continue

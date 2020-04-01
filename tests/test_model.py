@@ -114,3 +114,11 @@ class TestMove(unittest.TestCase):
         self.assertEqual(bests[0], "LOCK_ON_FAST")
         self.assertEqual(bests[1], "FLASH_CANNON")
         self.assertEqual(bests[2], "BODY_SLAM")
+        bests = Move.best_dpt_moves(
+            ["BITE_FAST", "POISON_JAB_FAST", "SNARL_FAST"],
+            ["DARK_PULSE", "GUNK_SHOT", "SLUDGE_WAVE", "ACID_SPRAY"],
+        )
+        self.assertEqual(len(bests), 3)
+        self.assertEqual(bests[0], "SNARL_FAST")
+        self.assertEqual(bests[1], "GUNK_SHOT")
+        self.assertEqual(bests[2], "SLUDGE_WAVE")
