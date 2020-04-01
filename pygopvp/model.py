@@ -285,13 +285,13 @@ class Pokemon(BasePokemon):
 
     def __str__(self) -> str:
         return "{!s}(CP: {}, HP: {}, energy: {})".format(
-            self.name.title(), self.cp, self.hp, self.energy
+            self.title(), self.cp, self.hp, self.energy
         )
 
     def reset(self) -> None:
         """Reset a pokemon: HP, energy and reset buffs"""
         self.hp = self.startHp
-        self.energy = 0.0
+        self.energy = 0
         self.attBuffI = (len(BUFFS["attackBuffMultiplier"]) - 1) >> 1
         self.defBuffI = (len(BUFFS["defenseBuffMultiplier"]) - 1) >> 1
 
