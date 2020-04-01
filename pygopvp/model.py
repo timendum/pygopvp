@@ -162,6 +162,9 @@ class BasePokemon:
     def __repr__(self) -> str:
         return "BasePokemon({!r})".format(self.name)
 
+    def title(self):
+        return self.name.replace("_", " ").replace(" ALOLA", " (Alolan)").title()
+
     def best_dpt_moves(self) -> List[str]:
         """Find the best move names for this pokemon"""
         return Move.best_dpt_moves(self.fast_moves, self.charged_moves, self.types)

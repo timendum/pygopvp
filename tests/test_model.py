@@ -20,6 +20,10 @@ class TestBasePokemon(unittest.TestCase):
             return
         self.fail("No exception")
 
+    def test_title(self):
+        self.assertEqual(BasePokemon("MUK").title(), "Muk")
+        self.assertEqual(BasePokemon("MUK_ALOLA").title(), "Muk (Alolan)")
+
 
 class TestPokemon(unittest.TestCase):
     def test_properties(self):
