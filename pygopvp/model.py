@@ -284,8 +284,16 @@ class Pokemon(BasePokemon):
         )
 
     def __str__(self) -> str:
-        return "{!s}(CP: {}, HP: {}, energy: {})".format(
-            self.title(), self.cp, self.hp, self.energy
+        moves = []
+        if self.fast:
+            moves.append(self.fast)
+        if self.charged:
+            moves.extend(self.charged)
+        s_moves = ""
+        if moves:
+            s_moves = "; moves: " + ", ".join([str(m) for m in moves])
+        return "{!s}(CP: {}{})".format(
+            self.title(), self.cp, s_moves
         )
 
     def reset(self) -> None:
