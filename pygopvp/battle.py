@@ -6,32 +6,60 @@ from .model import Move, Pokemon
 
 
 class BL:
+    """Holds and generate battle log"""
+
     def __init__(self, battle: "Battle"):
+        self.logs: List[str] = []
         self.battle = battle
 
+    def _p_name(self, a):
+        return self.battle.pokemons[a].title()
+
+    def _p_str(self, a):
+        pkmn = self.battle.pokemons[a]
+        return "{!s}(HP: {}, energy: {})".format(pkmn.name.title(), pkmn.hp, pkmn.energy)
+
     def shield(self, a: int, move: Move):
-        return "{} {} uses {} but shield is used".format(
-            self.battle.turn, self.battle.pokemons[a], move
+        self.logs.append(
+            "{:>2} {} uses {} but shield is used: deals 1 damange and loses {} energy".format(
+                self.battle.turn, self._p_name(a), move, -move.energyDelta
+            )
         )
 
     def damage(self, a: int, move: Move, dmg: int):
-        return "{}: {} uses {} and deals {} damage".format(
-            self.battle.turn, self.battle.pokemons[a], move, dmg
+        self.logs.append(
+            "{:>2} {} uses {}: deals {} damage and gains {} energy".format(
+                self.battle.turn, self._p_str(a), move, dmg, move.energyDelta
+            )
         )
 
     def start(self):
-        return "{}: Start: {!r} vs {!r}".format(
-            self.battle.turn, self.battle.pokemons[0], self.battle.pokemons[1]
+        self.logs.append(
+            "Start: {!r} vs {!r}".format(self.battle.pokemons[0], self.battle.pokemons[1])
         )
 
     def end_turn(self):
-        return "{}: End of turn: {!r} vs {!r}".format(
-            self.battle.turn, self.battle.pokemons[0], self.battle.pokemons[1]
+        self.logs.append(
+            "{:>2} End of turn: {} vs {}".format(self.battle.turn, self._p_str(0), self._p_str(1))
         )
 
     def buff(self, a: int, stat: str, amount: int):
         texts = [None, "rose", "rose sharply", "fell sharply", "fell"]
-        return "{}: {} {} {}".format(self.battle.turn, self.battle.pokemons[a], stat, texts[amount])
+        self.logs.append(
+            "{:>2} {} {} {}".format(self.battle.turn, self._p_str(a), stat, texts[amount])
+        )
+
+
+class DummyBL:
+    """To fake BL when not needed"""
+
+    def __call__(self, *args, **kwargs):
+        pass
+
+    def __getattr__(self, name):
+        if name == "log":
+            return ()
+        return self
 
 
 class FakeMove(Move):
@@ -52,13 +80,18 @@ class Battle:
     TURN_DURATION = int(SETTINGS["turnDurationSeconds"] * 1000)
     CHARGING_DURATION = 9500
 
-    def __init__(self, pokemons: Iterable[Pokemon], shields=(1, 1)):
+    def __init__(self, pokemons: Iterable[Pokemon], shields=(1, 1), battlelog=False):
         self.pokemons = [pokemon.copy() for pokemon in pokemons]
         if isinstance(shields, int):
             shields = [shields, shields]
         self.startSchields = list(shields)
         self.reset()
         self.waitTurns = [0, 0]
+        if battlelog:
+            self.bl = BL(self)
+            self.bl.start()
+        else:
+            self.bl = DummyBL()
 
     def reset(self) -> None:
         self.turn = 0
@@ -66,7 +99,6 @@ class Battle:
         self.shields = self.startSchields
         for pokemon in self.pokemons:
             pokemon.reset()
-        self.logs = [BL(self).start()]
 
     def __repr__(self):
         return "Battle({!r}, shields={}".format(self.pokemons, self.startSchields)
@@ -116,8 +148,7 @@ class Battle:
             multiplier *= EFFECTIVE[move.type][ptype]
         return multiplier
 
-    @property
-    def _is_valid(self):
+    def can_continue(self):
         if not all(self.pokemons) or len(self.pokemons) != 2:
             return False
         if self.pokemons[0].hp <= 0 or self.pokemons[1].hp <= 0:
@@ -141,18 +172,18 @@ class Battle:
         self.waitTurns[a] = move.waitTurns
         if move.is_fast:
             defender.hp -= min(damage, defender.hp)
-            self.logs.append(BL(self).damage(a, move, damage))
+            self.bl.damage(a, move, damage)
             return
         # charged
         self.mseconds += self.CHARGING_DURATION
         if self.remaining_shields(b) > 0:
             self.consume_shield(b)
             defender.hp -= 1
-            self.logs.append(BL(self).shield(a, move))
+            self.bl.shield(a, move)
             self.apply_buffs(a, move)
             return
         defender.hp -= min(damage, defender.hp)
-        self.logs.append(BL(self).damage(a, move, damage))
+        self.bl.damage(a, move, damage)
         self.apply_buffs(a, move)
 
     @staticmethod
@@ -170,19 +201,19 @@ class Battle:
             attacker = self.pokemons[a]
             if buff.a_att:
                 attacker.attBuffI = self.__calc_buff(attacker.attBuffI, buff.a_att)
-                self.logs.append(BL(self).buff(a, "attack", buff.a_att))
+                self.bl.buff(a, "attack", buff.a_att)
             if buff.a_def:
                 attacker.defBuffI = self.__calc_buff(attacker.defBuffI, buff.a_def)
-                self.logs.append(BL(self).buff(a, "defense", buff.a_def))
+                self.bl.buff(a, "defense", buff.a_def)
         if buff.b_att or buff.b_deff:
             b = a ^ 1
             defender = self.pokemons[b]
             if buff.b_att:
                 defender.attBuffI = self.__calc_buff(defender.attBuffI, buff.b_att)
-                self.logs.append(BL(self).buff(b, "attack", buff.b_att))
+                self.bl.buff(b, "attack", buff.b_att)
             if buff.a_def:
                 defender.defBuffI = self.__calc_buff(defender.defBuffI, buff.b_def)
-                self.logs.append(BL(self).buff(b, "defense", buff.b_def))
+                self.bl.buff(b, "defense", buff.b_def)
 
     def perform_turn(self) -> None:
         if self.pokemons[1].attack > self.pokemons[0].attack:
@@ -206,11 +237,11 @@ class Battle:
         if moveb.is_charged and movea.is_fast:
             self.perform_move(b, moveb)
             b_moved = True
-            if not self._is_valid:
+            if not self.can_continue():
                 return
         self.perform_move(a, movea)
         if movea.is_charged:
-            if not self._is_valid:
+            if not self.can_continue():
                 return
         if not b_moved:
             self.perform_move(b, moveb)
@@ -225,11 +256,10 @@ class Battle:
         while True:
             self.perform_turn()
             self.mseconds += self.TURN_DURATION
-            if not self._is_valid:
+            if not self.can_continue():
                 self.mseconds += self.TURN_DURATION
                 break
-            # self.logs.append(BattleLog.end_turn(self.turn, self.attacker, self.defender))
-        # print("\n".join([str(l) for l in self.logs]))
+        self.bl.end_turn()
 
     def rate(self, i: int) -> int:
         """Rate a pokemon in a battle, same as pvpoke"""
