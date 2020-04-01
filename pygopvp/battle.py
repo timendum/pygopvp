@@ -91,7 +91,7 @@ class Battle:
             self.bl = BL(self)
             self.bl.start()
         else:
-            self.bl = DummyBL()
+            self.bl = DummyBL()  # type: ignore
 
     def reset(self) -> None:
         self.turn = 0

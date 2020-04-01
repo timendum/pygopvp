@@ -292,9 +292,7 @@ class Pokemon(BasePokemon):
         s_moves = ""
         if moves:
             s_moves = "; moves: " + ", ".join([str(m) for m in moves])
-        return "{!s}(CP: {}{})".format(
-            self.title(), self.cp, s_moves
-        )
+        return "{!s}(CP: {}{})".format(self.title(), self.cp, s_moves)
 
     def reset(self) -> None:
         """Reset a pokemon: HP, energy and reset buffs"""
