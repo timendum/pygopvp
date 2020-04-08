@@ -1,16 +1,29 @@
 from numbers import Real
 import unittest
 
-from pygopvp.gamemaster import POKEMONS, BUFFS, EFFECTIVE, MOVES, SETTINGS
+from pygopvp.gamemaster import (
+    POKEMONS,
+    BUFFS,
+    EFFECTIVE,
+    MOVES,
+    SETTINGS,
+    _update_dev,
+    _update_miners,
+)
 from pygopvp.model import Type
 
 
-class TestGameMaster(unittest.TestCase):
+class TestGameMasterMiners(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        _update_miners()
+
     def test_pokemons(self):
         self.assertTrue(len(POKEMONS) > 1251)
         self.assertIn("SMEARGLE", POKEMONS)
         self.assertTrue(len(POKEMONS["SMEARGLE"]["quickMoves"]) > 10)
         self.assertTrue(len(POKEMONS["SMEARGLE"]["cinematicMoves"]) > 10)
+        self.assertIsNotNone(POKEMONS["SMEARGLE"]["type"])
 
     def test_buffs(self):
         self.assertIn("minimumStatStage", BUFFS)
@@ -50,3 +63,9 @@ class TestGameMaster(unittest.TestCase):
         self.assertIsInstance(SETTINGS["fastAttackBonusMultiplier"], Real)
         self.assertIn("sameTypeAttackBonusMultiplier", SETTINGS)
         self.assertIsInstance(SETTINGS["sameTypeAttackBonusMultiplier"], Real)
+
+
+class TestGameMasterDev(TestGameMasterMiners):
+    @classmethod
+    def setUpClass(cls):
+        _update_dev()
