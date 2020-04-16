@@ -104,7 +104,7 @@ class Move:
     @staticmethod
     def best_dpt_moves(fast_names: List[str], charged_name: List[str], bonusType=()) -> List[str]:
         """Find the best fast, charged, second charged move name, from a list of move names."""
-        TURNS = 1000
+        TURNS = 1013  # prime number, every charged move should have remaing turns
         best_dpt = 0
         best = ["", ""]
         fasts = [Move(name) for name in fast_names]
@@ -288,7 +288,7 @@ class Pokemon(BasePokemon):
         if self.fast:
             moves.append(self.fast)
         if self.charged:
-            moves.extend(self.charged)
+            moves.extend([charged for charged in self.charged if charged])
         s_moves = ""
         if moves:
             s_moves = "; moves: " + ", ".join([str(m) for m in moves])
