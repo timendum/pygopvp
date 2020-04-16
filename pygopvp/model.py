@@ -265,14 +265,15 @@ class Pokemon(BasePokemon):
         0.79030001,
     ]
 
-    def __init__(self, name, level: float, IVs: List[int], attaks=(None, None)):
+    def __init__(self, name, level: float, IVs: List[int], attacks=None):
         super().__init__(name)
         self.level = level
         self.attackIV = IVs[0]
         self.defenseIV = IVs[1]
         self.staminaIV = IVs[2]
-        self.fast = attaks[0]  # type: Move
-        self.charged = attaks[1:]  # type: List[Move]
+        attacks = attacks or (None, None)
+        self.fast = attacks[0]  # type: Optional[Move]
+        self.charged = list(attacks[1:])  # type: List[Optional[Move]]
         self.reset()
 
     def __repr__(self) -> str:
