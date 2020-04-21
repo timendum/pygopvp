@@ -1,10 +1,11 @@
 import json
 import os
 import pathlib
-from typing import Any, Dict
+from collections import defaultdict
+from typing import Any, Dict, Iterable
 from urllib.request import urlretrieve
 
-from .utils import Type
+from .utils import LEAGUES, League, Type
 
 DATA_DIR = "data"
 FILEPATH = os.path.join(DATA_DIR, "GAME_MASTER.json")
@@ -47,8 +48,9 @@ def _update_dev():
 POKEMONS = {}
 MOVES = {}
 EFFECTIVE = {}
-SETTINGS = {}  # type: Dict[str, float]
+SETTINGS: Dict[str, float] = {}
 BUFFS: Dict[str, Any] = {}
+TRAINERS: Dict[str, Dict[League, Iterable[str]]] = defaultdict(lambda: {l: () for l in LEAGUES})
 
 
 def __data_to_effective(effective_data):
@@ -88,6 +90,17 @@ def __load():
             BUFFS.update(item["combatStatStageSettings"])
         elif item["templateId"] == "SMEARGLE_MOVES_SETTINGS":
             smeargle_moves.update(item["smeargleMovesSettings"])
+        elif "combatNpcTrainer" in item:
+            _, name, league_name = item["templateId"].split("_")
+            league = [l for l in LEAGUES if l.name == league_name.title()][0]
+            pokemons = [p for p in item["combatNpcTrainer"]["availablePokemon"]]
+            TRAINERS[name][league] = []
+            for pokemon in pokemons:
+                if "pokemonDisplay" in pokemon:
+                    TRAINERS[name][league].append(pokemon["pokemonDisplay"]["form"])
+                else:
+                    TRAINERS[name][league].append(pokemon["pokemonType"])
+
     POKEMONS["SMEARGLE"].update(smeargle_moves)
 
 

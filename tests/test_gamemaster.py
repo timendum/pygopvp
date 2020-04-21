@@ -7,6 +7,7 @@ from pygopvp.gamemaster import (
     EFFECTIVE,
     MOVES,
     SETTINGS,
+    TRAINERS,
     _update_dev,
     _update_miners,
 )
@@ -63,6 +64,12 @@ class TestGameMasterMiners(unittest.TestCase):
         self.assertIsInstance(SETTINGS["fastAttackBonusMultiplier"], Real)
         self.assertIn("sameTypeAttackBonusMultiplier", SETTINGS)
         self.assertIsInstance(SETTINGS["sameTypeAttackBonusMultiplier"], Real)
+
+    def test_trainers(self):
+        self.assertEqual(len(TRAINERS), 3)
+        for name, v in TRAINERS.items():
+            for league, pokemons in v.items():
+                self.assertEqual(len(pokemons), 3)
 
 
 class TestGameMasterDev(TestGameMasterMiners):
