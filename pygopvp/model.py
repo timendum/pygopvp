@@ -263,6 +263,10 @@ class Pokemon(BasePokemon):
         0.78463697,
         0.787473578,
         0.79030001,
+        0.8003,
+        0.8053,
+        0.81029999,
+        0.81529999,
     ]
 
     def __init__(self, name, level: float, IVs: List[int], attacks=None):
