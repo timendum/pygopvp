@@ -108,4 +108,8 @@ if __name__ == "__main__":
     _update_dev()
     print("Gamemaster updated")
 
-__load()
+try:
+    __load()
+except json.decoder.JSONDecodeError:
+    os.unlink(FILEPATH)
+    __load()

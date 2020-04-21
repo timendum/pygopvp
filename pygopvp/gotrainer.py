@@ -6,9 +6,9 @@ from .model import Move, Pokemon
 from .utils import League
 
 
-def read_export(trainer_name: str, league: League) -> List[Pokemon]:
+def genate_from_leader(leader_name: str, league: League) -> List[Pokemon]:
     """Load pokemons from leaders given league"""
-    pnames = TRAINERS[trainer_name.upper()][league]
+    pnames = TRAINERS[leader_name.upper()][league]
     pokemons = []
     for pname in pnames:
         pokemon = Pokemon.find_max(Pokemon.convert_name(pname), league.cp)

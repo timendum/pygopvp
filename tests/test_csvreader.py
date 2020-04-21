@@ -3,7 +3,6 @@ import tempfile
 import unittest
 
 import pygopvp.csvreader as csvreader
-from pygopvp.utils import LEAGUES
 
 _TXT_CSV = """Ancestor?,Scan date,Nr,Name,Nickname,Gender,Level,possibleLevels,CP,HP,Dust cost,Overall appraisal,ATT max?,DEF max?,HP max?,Stats appraisal,min IV%,ØIV%,max IV%,ØATT IV,ØDEF IV,ØHP IV,Unique?,Fast move,Special move,Special move 2,DPS,Box,Custom1,Custom2,Saved,Form,Egg,Lucky,BuddyBoosted,ShadowForm
 0,2/21/20 15:49:44,320,Wailmer,22+≈06,♀,22.0,22.0,752,175,3000,?,0,0,0,?,13.3,13.3,13.3,1.3,1.7,3.0,0,Splash,Water Pulse,- ,9.6,da evolvere,,,0,319,0,1,0,0

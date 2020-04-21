@@ -26,7 +26,7 @@ class TestCustomReader(unittest.TestCase):
         customreader.DATA_DIR = self.origin_DATA_DIR
 
     def test_read_export(self):
-        pokemons = list(customreader.read_export(LEAGUES[2].cp))
+        pokemons = list(customreader.generate_from_custom(LEAGUES[2].cp))
         self.assertEqual(len(pokemons), 4)
         self.assertEqual(pokemons[0].name, "METAGROSS")
         self.assertEqual(pokemons[0].level, 40)

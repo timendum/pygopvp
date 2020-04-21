@@ -23,7 +23,8 @@ def _update(cp, section):
     )
 
 
-def load(cp: int, section="overall") -> List[Dict[str, Any]]:
+def _load(cp: int, section="overall") -> List[Dict[str, Any]]:
+    """Load (and download) file and return a list of {pokemonData}"""
     filepath = __filepath(cp, section)
     if not os.path.isfile(filepath):
         _update(cp, section)
@@ -44,8 +45,9 @@ def load(cp: int, section="overall") -> List[Dict[str, Any]]:
     return pokemons
 
 
-def generate(cp: int, section="overall", top=10):
-    dpokemons = load(cp, section)[0:top]
+def generate_from_rankings(cp: int, section="overall", top=10):
+    """Load rankings and generate Pokemons"""
+    dpokemons = _load(cp, section)[0:top]
     pokemons = []
     for dpokemon in dpokemons:
         pokemon = Pokemon.find_max(Pokemon.convert_name(dpokemon["speciesId"]), cp)

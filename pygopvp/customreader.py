@@ -22,7 +22,7 @@ def __filepath(cp, section: str) -> str:
     return os.path.join(DATA_DIR, "{}-{}.txt".format(section, cp))
 
 
-def read_export(cp, section="custom", top=30) -> List[Pokemon]:
+def generate_from_custom(cp, section="custom", top=30) -> List[Pokemon]:
     """Load custom opponents csv and generate Pokemons"""
     filepath = __filepath(cp, section)
     with open(filepath, newline="", encoding="utf8") as csvfile:
