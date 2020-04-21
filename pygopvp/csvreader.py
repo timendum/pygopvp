@@ -1,3 +1,4 @@
+"""Load export from Calcy-IV"""
 import csv
 import glob
 import os
@@ -19,6 +20,7 @@ class CustomDialect(csv.Dialect):
 
 
 def find_export(folder=None) -> str:
+    """Find most recent history_*.csv file"""
     folder = folder or DATA_DIR
     files = glob.glob(os.path.join(folder, "history_*.csv"))
     files = sorted(files, reverse=True)
@@ -29,6 +31,7 @@ def find_export(folder=None) -> str:
 
 
 def read_export(csvfile=None) -> List[Pokemon]:
+    """Load Calcy-IV and generate Pokemons"""
     csvfile = csvfile or find_export()
     pokemons = []
     with open(csvfile, newline="", encoding="utf8") as csvfile:

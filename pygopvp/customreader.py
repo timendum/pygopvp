@@ -1,3 +1,4 @@
+"""Export like PvPoke custom multi-battle"""
 import csv
 import os
 from typing import List
@@ -22,6 +23,7 @@ def __filepath(cp, section: str) -> str:
 
 
 def read_export(cp, section="custom", top=30) -> List[Pokemon]:
+    """Load custom opponents csv and generate Pokemons"""
     filepath = __filepath(cp, section)
     with open(filepath, newline="", encoding="utf8") as csvfile:
         csv_reader = csv.reader(csvfile, dialect=CustomDialect())
