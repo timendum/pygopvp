@@ -156,6 +156,8 @@ class BasePokemon:
         self.isTransferable = pokemon_data.get("isTransferable", False)
         self.fast_moves = pokemon_data["quickMoves"]
         self.charged_moves = pokemon_data["cinematicMoves"]
+        self.legacy_fast = pokemon_data.get("eliteQuickMove", [])
+        self.legacy_charged = pokemon_data.get("eliteCinematicMove", [])
         if "type2" in pokemon_data:
             self.types.append(Type(pokemon_data.get("type2")))
 
@@ -165,9 +167,14 @@ class BasePokemon:
     def title(self):
         return self.name.replace("_", " ").replace(" ALOLA", " (Alolan)").title()
 
-    def best_dpt_moves(self) -> List[str]:
+    def best_dpt_moves(self, legacy=False) -> List[str]:
         """Find the best move names for this pokemon"""
-        return Move.best_dpt_moves(self.fast_moves, self.charged_moves, self.types)
+        fast_moves = self.fast_moves
+        charged_moves = self.charged_moves
+        if legacy:
+            fast_moves.extend(self.legacy_fast)
+            charged_moves.extend(self.legacy_charged)
+        return Move.best_dpt_moves(fast_moves, charged_moves, self.types)
 
     @staticmethod
     def convert_name(name: str) -> str:
