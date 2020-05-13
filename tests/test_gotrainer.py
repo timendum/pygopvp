@@ -12,7 +12,5 @@ class TestGameMasterMiners(unittest.TestCase):
                 self.assertEqual(len(pokemons), 3)
 
     def test_ko(self):
-        try:
+        with self.assertRaises(KeyError):
             genate_from_leader("NONE", LEAGUES[0])
-        except Exception as e:
-            self.assertIsInstance(e, ValueError)

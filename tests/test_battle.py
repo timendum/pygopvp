@@ -30,7 +30,7 @@ class TestBattle(unittest.TestCase):
         battle = Battle([pokemona, pokemonb])
         battle.resolve()
         self.assertTrue(battle.pokemons[0].hp <= 0)
-        self.assertTrue(battle.seconds > 50)
+        self.assertTrue(battle.seconds > 40)
 
     def test_battle_c(self):
         """Different fast move timing"""
