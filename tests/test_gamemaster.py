@@ -65,11 +65,15 @@ class TestGameMasterMiners(unittest.TestCase):
         self.assertIn("sameTypeAttackBonusMultiplier", SETTINGS)
         self.assertIsInstance(SETTINGS["sameTypeAttackBonusMultiplier"], Real)
 
-    def test_trainers(self):
+    def test_trainers_ok(self):
         self.assertEqual(len(TRAINERS), 3)
         for name, v in TRAINERS.items():
             for league, pokemons in v.items():
                 self.assertEqual(len(pokemons), 3)
+
+    def test_trainers_ko(self):
+        with self.assertRaises(KeyError):
+            TRAINERS['undefined']
 
 
 class TestGameMasterDev(TestGameMasterMiners):
