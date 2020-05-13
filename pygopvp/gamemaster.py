@@ -50,7 +50,7 @@ MOVES = {}
 EFFECTIVE = {}
 SETTINGS: Dict[str, float] = {}
 BUFFS: Dict[str, Any] = {}
-TRAINERS: Dict[str, Dict[League, Iterable[str]]] = defaultdict(lambda: {l: () for l in LEAGUES})
+TRAINERS: Dict[str, Dict[League, Iterable[str]]] = {}
 
 
 def __data_to_effective(effective_data):
@@ -94,6 +94,8 @@ def __load():
             _, name, league_name = item["templateId"].split("_")
             league = [l for l in LEAGUES if l.name == league_name.title()][0]
             pokemons = [p for p in item["combatNpcTrainer"]["availablePokemon"]]
+            if name not in TRAINERS:
+                TRAINERS[name] = {l: () for l in LEAGUES}
             TRAINERS[name][league] = []
             for pokemon in pokemons:
                 if "pokemonDisplay" in pokemon:
