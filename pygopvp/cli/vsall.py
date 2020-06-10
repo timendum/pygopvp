@@ -3,9 +3,9 @@ from typing import Iterable, List, Tuple
 
 from ..battle import Battle
 from ..csvreader import read_export
-from .utils import filter_pokemons, load_opponents
 from ..model import Pokemon
-from ..utils import League, compatible_leagues
+from ..utils import compatible_leagues
+from .utils import filter_pokemons, find_pokemon, load_opponents
 
 
 def battle_all(
@@ -28,8 +28,7 @@ def battle_all(
 
 def main(name: str, cp: int, dataname: str, shields: int, limit: int, nopponents: int) -> None:
     cvs_pokemons = read_export()
-    pokemons = [pokemon for pokemon in cvs_pokemons if pokemon.name == name]
-    pokemons = [pokemon for pokemon in pokemons if cp == pokemon.cp]
+    pokemons = find_pokemon(cvs_pokemons, name, cp)
     if not pokemons:
         print("Pokemon not found")
         return
@@ -51,5 +50,8 @@ def main(name: str, cp: int, dataname: str, shields: int, limit: int, nopponents
         print("{:d}. {!s} = {}".format(i + 1, poppos[i][0].title(), poppos[i][1]))
     print("...")
     for i in range(limit + 1, 0, -1):
-        print("{:d}. {!s} = {}".format(lopps - i + 1, poppos[lopps - i][0].title(), poppos[lopps - i][1]))
-
+        print(
+            "{:d}. {!s} = {}".format(
+                lopps - i + 1, poppos[lopps - i][0].title(), poppos[lopps - i][1]
+            )
+        )

@@ -1,11 +1,11 @@
-from typing import Any, List, Tuple, Iterable
+from typing import Any, Iterable, List, Tuple
 
 from ..battle import Battle
 from ..csvreader import read_export
 from ..model import Move, Pokemon
 from ..rankings import generate_from_rankings
 from ..utils import compatible_leagues
-from .utils import print_table
+from .utils import find_pokemon, print_table
 
 
 def generate_movesets(pokemon: Pokemon) -> List[List[Move]]:
@@ -41,8 +41,7 @@ def order_by_time(movesets: List[List[Move]]):
 
 def main(name: str, cp: int, dataname: str, shields: int, nopponents: int) -> None:
     cvs_pokemons = read_export()
-    pokemons = [pokemon for pokemon in cvs_pokemons if pokemon.name == name]
-    pokemons = [pokemon for pokemon in pokemons if cp == pokemon.cp]
+    pokemons = find_pokemon(cvs_pokemons, name, cp)
     if not pokemons:
         print("Pokemon not found")
         return

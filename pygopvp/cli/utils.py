@@ -1,3 +1,4 @@
+import bisect
 from typing import Iterable, List
 
 from ..customreader import generate_from_custom as customs
@@ -41,6 +42,14 @@ def filter_pokemons(pokemons: Iterable[Pokemon], league: League) -> List[Pokemon
     result = [pokemon for pokemon in result if pokemon.cp >= league.lower]
     print("You have {} valid pokemons".format(len(result)))
     return result
+
+
+def find_pokemon(pokemons: Iterable[Pokemon], name: str, cp: int) -> List[Pokemon]:
+    pokemons = [pokemon for pokemon in pokemons if pokemon.name == name]
+    pokemons = sorted(pokemons, key=lambda p: p.cp)
+    idx = bisect.bisect([p.cp for p in pokemons], cp)
+    print(name, cp, pokemons[:idx][::-1])
+    return pokemons[:idx][::-1]
 
 
 def add_moves(pokemon: Pokemon, moves: Iterable[Move]) -> None:
