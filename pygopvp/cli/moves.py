@@ -93,7 +93,7 @@ def main(name: str, cp: int, dataname: str, shields: int, nopponents: int) -> No
             [
                 move,
                 move.type,
-                damage,
+                "{:.1f}".format(damage),
                 move.energyDelta,
                 turns,
                 "{:.2f}".format(damage / turns),
@@ -113,7 +113,7 @@ def main(name: str, cp: int, dataname: str, shields: int, nopponents: int) -> No
             [
                 move,
                 move.type,
-                damage,
+                "{:.1f}".format(damage),
                 -move.energyDelta,
                 "{:.2f}".format(damage / -move.energyDelta),
                 "*" if move.moveId in pokemon.legacy_charged else "",
