@@ -165,7 +165,11 @@ class BasePokemon:
         return "BasePokemon({!r})".format(self.name)
 
     def title(self):
-        return self.name.replace("_", " ").replace(" ALOLA", " (Alolan)").title()
+        return (
+            self.name.replace("_", " ")
+            .replace(" ALOLA", " (Alolan)")
+            .title().replace(" Shadow", " (shadow)")
+        )
 
     def best_dpt_moves(self, legacy=False) -> List[str]:
         """Find the best move names for this pokemon"""

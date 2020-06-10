@@ -5,6 +5,7 @@ from pygopvp.cli.counter import main as counter_func
 from pygopvp.cli.moves import main as moves_func
 from pygopvp.cli.rank import main as rank_func
 from pygopvp.cli.team import main as team_func
+from pygopvp.cli.vsall import main as vsall_func
 from pygopvp.cli.utils import league, pokename
 from pygopvp.gamemaster import _update_dev, _update_miners
 from pygopvp.model import Move
@@ -12,6 +13,10 @@ from pygopvp.model import Move
 
 def team_main(args):
     return team_func(args.league, args.opponents, args.shields, args.num, args.nopponents)
+
+
+def vsall_main(args):
+    return vsall_func(args.name, args.cp, args.opponents, args.shields, args.num, args.nopponents)
 
 
 def counter_main(args):
@@ -93,7 +98,7 @@ def main():
     parser_moves.add_argument(
         "-nopponents", "-o", default=30, type=int, help="Max number of opponents"
     )
-    # moves
+    # battle
     parser_battle = subparsers.add_parser("battle", help="Simulate a battle")
     parser_battle.set_defaults(func=battle_main)
     parser_battle.add_argument("name", type=pokename, help="Your pokemon name")
@@ -103,6 +108,17 @@ def main():
     parser_battle.add_argument("--fast", "-f", type=Move.fast_from_name)
     parser_battle.add_argument("--charged", "-c", nargs="*", type=Move.charged_from_name)
     parser_battle.add_argument("--shields", "-s", default=1, type=int, help="How many shields")
+    # vsall
+    parser_vsall = subparsers.add_parser("vsall", help="Rank a single pokemon vs others")
+    parser_vsall.set_defaults(func=vsall_main)
+    parser_vsall.add_argument("name", type=pokename, help="Your pokemon name")
+    parser_vsall.add_argument("cp", type=int, help="Your pokemon CP")
+    parser_vsall.add_argument("opponents", default="overall", type=str, nargs="?")
+    parser_vsall.add_argument("--shields", "-s", default=1, type=int, help="How many shields")
+    parser_vsall.add_argument("-num", "-n", default=5, type=int, help="Number of results")
+    parser_vsall.add_argument(
+        "-nopponents", "-o", default=10000, type=int, help="Max number of opponents"
+    )
     # gamemaster update
     parser_gmupdate = subparsers.add_parser("gamemaster", help="Update gamemaster")
     parser_gmupdate.set_defaults(func=gamemaster_update)
