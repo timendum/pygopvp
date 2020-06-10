@@ -48,7 +48,6 @@ def find_pokemon(pokemons: Iterable[Pokemon], name: str, cp: int) -> List[Pokemo
     pokemons = [pokemon for pokemon in pokemons if pokemon.name == name]
     pokemons = sorted(pokemons, key=lambda p: p.cp)
     idx = bisect.bisect([p.cp for p in pokemons], cp)
-    print(name, cp, pokemons[:idx][::-1])
     return pokemons[:idx][::-1]
 
 
