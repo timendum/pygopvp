@@ -45,10 +45,15 @@ def filter_pokemons(pokemons: Iterable[Pokemon], league: League) -> List[Pokemon
 
 
 def find_pokemon(pokemons: Iterable[Pokemon], name: str, cp: int) -> List[Pokemon]:
-    pokemons = [pokemon for pokemon in pokemons if pokemon.name == name]
-    pokemons = sorted(pokemons, key=lambda p: p.cp)
+    fpokemons = [pokemon for pokemon in pokemons if pokemon.name == name]
+    if not fpokemons:
+        fpokemons = [pokemon for pokemon in pokemons if name in pokemon.name]
+    fpokemons = sorted(fpokemons, key=lambda p: p.cp)
+    if cp:
     idx = bisect.bisect([p.cp for p in pokemons], cp)
-    return pokemons[:idx][::-1]
+    else:
+        idx = len(fpokemons)
+    return fpokemons[:idx][::-1]
 
 
 def add_moves(pokemon: Pokemon, moves: Iterable[Move]) -> None:
