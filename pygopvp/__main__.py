@@ -54,6 +54,13 @@ def gamemaster_update(args):
         print("Gamemaster updated from PokeMiners")
 
 
+def shields(s: str):
+    try:
+        return int(s)
+    except ValueError:
+        return [int(sp) for sp in s.split(",")]
+
+
 def main():
     parser = argparse.ArgumentParser("pygopvp")
     subparsers = parser.add_subparsers(help="Modules:")
@@ -62,7 +69,7 @@ def main():
     parser_team.set_defaults(func=team_main)
     parser_team.add_argument("league", default="great", type=league)
     parser_team.add_argument("opponents", default="overall", type=str)
-    parser_team.add_argument("--shields", "-s", default=1, type=int)
+    parser_team.add_argument("--shields", "-s", default=1, type=shields)
     parser_team.add_argument(
         "-nopponents", "-o", default=30, type=int, help="Max number of opponents"
     )
@@ -76,14 +83,14 @@ def main():
     parser_counter.add_argument("cp", type=int)
     parser_counter.add_argument("--fast", "-f", type=Move.fast_from_name)
     parser_counter.add_argument("--charged", "-c", nargs="*", type=Move.charged_from_name)
-    parser_counter.add_argument("-shields", "-s", default=1, type=int)
+    parser_counter.add_argument("-shields", "-s", default=1, type=shields)
     parser_counter.add_argument("--num", "-n", default=10, type=int, help="Number of results")
     # rank
     parser_rank = subparsers.add_parser("rank", help="Rank your pokemons")
     parser_rank.set_defaults(func=rank_main)
     parser_rank.add_argument("league", default="great", type=league)
     parser_rank.add_argument("opponents", default="overall", type=str, nargs="?")
-    parser_rank.add_argument("--shields", "-s", default=1, type=int)
+    parser_rank.add_argument("--shields", "-s", default=1, type=shields)
     parser_rank.add_argument(
         "-nopponents", "-o", default=30, type=int, help="Max number of opponents"
     )
@@ -94,7 +101,7 @@ def main():
     parser_moves.add_argument("name", type=pokename, help="Your pokemon name")
     parser_moves.add_argument("cp", type=int, help="Your pokemon CP")
     parser_moves.add_argument("opponents", default="overall", type=str, nargs="?")
-    parser_moves.add_argument("--shields", "-s", default=1, type=int, help="How many shields")
+    parser_moves.add_argument("--shields", "-s", default=1, type=shields, help="How many shields")
     parser_moves.add_argument(
         "-nopponents", "-o", default=30, type=int, help="Max number of opponents"
     )
@@ -107,14 +114,14 @@ def main():
     parser_battle.add_argument("ocp", type=int, help="Opponent CP")
     parser_battle.add_argument("--fast", "-f", type=Move.fast_from_name)
     parser_battle.add_argument("--charged", "-c", nargs="*", type=Move.charged_from_name)
-    parser_battle.add_argument("--shields", "-s", default=1, type=int, help="How many shields")
+    parser_battle.add_argument("--shields", "-s", default=1, type=shields, help="How many shields")
     # vsall
     parser_vsall = subparsers.add_parser("vsall", help="Rank a single pokemon vs others")
     parser_vsall.set_defaults(func=vsall_main)
     parser_vsall.add_argument("name", type=pokename, help="Your pokemon name")
     parser_vsall.add_argument("cp", type=int, help="Your pokemon CP")
     parser_vsall.add_argument("opponents", default="overall", type=str, nargs="?")
-    parser_vsall.add_argument("--shields", "-s", default=1, type=int, help="How many shields")
+    parser_vsall.add_argument("--shields", "-s", default=1, type=shields, help="How many shields")
     parser_vsall.add_argument("-num", "-n", default=5, type=int, help="Number of results")
     parser_vsall.add_argument(
         "-nopponents", "-o", default=10000, type=int, help="Max number of opponents"
