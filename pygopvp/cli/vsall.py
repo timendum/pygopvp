@@ -5,7 +5,7 @@ from ..battle import Battle
 from ..csvreader import read_export
 from ..model import Pokemon
 from ..utils import compatible_leagues
-from .utils import filter_pokemons, find_pokemon, load_opponents
+from .utils import find_pokemon, load_opponents
 
 
 def battle_all(

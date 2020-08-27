@@ -4,7 +4,7 @@ import pathlib
 from typing import Any, Dict, List
 from urllib.request import urlretrieve
 
-from .model import Pokemon, Move
+from .model import Move, Pokemon
 
 DATA_DIR = "data"
 

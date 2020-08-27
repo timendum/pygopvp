@@ -1,9 +1,9 @@
-from collections import namedtuple
-from enum import Enum
-from typing import List, Dict, Any
+import atexit
 import json
 import os
-import atexit
+from collections import namedtuple
+from enum import Enum
+from typing import Any, Dict, List
 
 League = namedtuple("League", ["name", "cp", "lower"])
 

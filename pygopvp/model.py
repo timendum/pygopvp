@@ -168,7 +168,8 @@ class BasePokemon:
         return (
             self.name.replace("_", " ")
             .replace(" ALOLA", " (Alolan)")
-            .title().replace(" Shadow", " (shadow)")
+            .title()
+            .replace(" Shadow", " (shadow)")
         )
 
     def best_dpt_moves(self, legacy=False) -> List[str]:

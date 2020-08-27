@@ -3,9 +3,9 @@ from typing import Iterable, List, Tuple
 
 from ..battle import Battle
 from ..csvreader import read_export
-from .utils import filter_pokemons, load_opponents
 from ..model import Pokemon
 from ..utils import League
+from .utils import filter_pokemons, load_opponents
 
 
 def order_pokemons(

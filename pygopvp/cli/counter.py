@@ -2,9 +2,9 @@ from typing import Iterable, List, Tuple
 
 from ..battle import Battle
 from ..csvreader import read_export
-from .utils import add_moves, filter_pokemons
 from ..model import Pokemon
 from ..utils import compatible_leagues
+from .utils import add_moves, filter_pokemons
 
 
 def order_matches(

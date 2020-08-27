@@ -5,8 +5,8 @@ from pygopvp.cli.counter import main as counter_func
 from pygopvp.cli.moves import main as moves_func
 from pygopvp.cli.rank import main as rank_func
 from pygopvp.cli.team import main as team_func
-from pygopvp.cli.vsall import main as vsall_func
 from pygopvp.cli.utils import league, pokename
+from pygopvp.cli.vsall import main as vsall_func
 from pygopvp.gamemaster import _update_dev, _update_miners
 from pygopvp.model import Move
 

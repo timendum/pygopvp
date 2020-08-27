@@ -1,7 +1,7 @@
 from ..battle import Battle
-from .utils import add_moves
-from ..model import Pokemon
 from ..csvreader import read_export
+from ..model import Pokemon
+from .utils import add_moves
 
 
 def main(a_name, a_cp, b_name, b_cp, b_moves, shields):
