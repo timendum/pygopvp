@@ -35,7 +35,11 @@ def _load(cp: int, section="overall") -> List[Dict[str, Any]]:
         pokemon = {
             "speciesId": row["speciesId"].upper(),
         }
-        pokemon["fastMove"] = sorted(row["moves"]["fastMoves"], key=lambda m: m["uses"])[-1]
+        try:
+            pokemon["fastMove"] = sorted(row["moves"]["fastMoves"], key=lambda m: m["uses"])[-1]
+        except TypeError:
+            # uses not in file
+            pokemon["fastMove"] = row["moves"]["fastMoves"][0]
         pokemon["fastMove"] = pokemon["fastMove"]["moveId"]
         pokemon["chargedMoves"] = sorted(
             row["moves"]["chargedMoves"], key=lambda m: m["uses"], reverse=True
