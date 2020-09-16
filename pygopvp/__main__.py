@@ -64,7 +64,7 @@ def main():
     parser_team = subparsers.add_parser("team", help="Find the best team for a list of opponents")
     parser_team.set_defaults(func=team_main)
     parser_team.add_argument("league", default="great", type=league)
-    parser_team.add_argument("opponents", default="overall", type=str)
+    parser_team.add_argument("opponents", default="overall", type=str, nargs="?")
     parser_team.add_argument("--shields", "-s", default=1, type=shields)
     parser_team.add_argument(
         "-nopponents", "-o", default=30, type=int, help="Max number of opponents"
