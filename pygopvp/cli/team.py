@@ -21,7 +21,7 @@ def order_pokemons(
                 print(e)
                 print(battle.pokemons)
             if battle.pokemons[1].hp <= 0:
-                win.append(opponent.name)
+                win.append(opponent.title())
         bests.append(pokemon)
         wins.append(set(win))
     return sorted(zip(bests, wins), key=lambda i: len(i[1]), reverse=True)
@@ -59,7 +59,10 @@ def main(league, dataname: str, shields: int, limit: int, nopponents: int) -> No
     print("\nSuggestions:")
     for i, suggestion in enumerate(suggestions):
         print(
-            "{:d}. {!s} = {}".format(
-                i + 1, ", ".join([str(p) for p in suggestion[0]]), suggestion[1]
+            "{:d}. {!s} = {}: {}".format(
+                i + 1,
+                ", ".join([str(p) for p in suggestion[0]]),
+                len(suggestion[1]),
+                (",".join(suggestion[1])),
             )
         )
