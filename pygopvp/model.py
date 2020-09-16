@@ -32,7 +32,10 @@ class Move:
     """A pokemon Move"""
 
     def __init__(self, name):
-        move_data = MOVES[name]
+        try:
+            move_data = MOVES[name]
+        except KeyError:
+            raise ValueError('Move not found: {} (update gamemaster?)'.format(name))
         self.moveId = move_data["uniqueId"]
         self.energyDelta = move_data.get("energyDelta", 0)
         self.type = Type(move_data.get("type"))
