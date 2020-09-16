@@ -1,7 +1,6 @@
 import json
 import os
 import pathlib
-from collections import defaultdict
 from typing import Any, Dict, Iterable
 from urllib.request import urlretrieve
 
@@ -17,32 +16,6 @@ def _update_miners():
         url="https://raw.githubusercontent.com/PokeMiners/game_masters/master/latest/latest.json",
         filename=FILEPATH,
     )
-
-
-def _update_dev():
-    pathlib.Path(DATA_DIR).mkdir(parents=True, exist_ok=True)
-    urlretrieve(
-        url="https://raw.githubusercontent.com/pokemongo-dev-contrib/pokemongo-game-master/master/versions/latest/GAME_MASTER.json",
-        filename=FILEPATH,
-    )
-    with open(FILEPATH, "rt") as fjson:
-        data = json.load(fjson)
-    # Convert pokemongo-dev-contrib format to PokeMiners format
-    data = data["itemTemplate"]
-    transformed = []
-    for item in data:
-        new_item = {"templateId": item["templateId"], "data": item}
-        if "pokemon" in item:
-            item["pokemon"]["pokemonId"] = item["pokemon"]["uniqueId"]
-            del item["pokemon"]["uniqueId"]
-            item["pokemon"]["type"] = item["pokemon"]["type1"]
-            del item["pokemon"]["type1"]
-            new_item["data"]["pokemonSettings"] = item["pokemon"]
-            del new_item["data"]["pokemon"]
-        transformed.append(new_item)
-    # Save result to the same file
-    with open(FILEPATH, "wt") as fjson:
-        json.dump(transformed, fjson, indent=1)
 
 
 POKEMONS = {}
@@ -107,7 +80,7 @@ def __load():
 
 
 if __name__ == "__main__":
-    _update_dev()
+    _update_miners()
     print("Gamemaster updated")
 
 try:

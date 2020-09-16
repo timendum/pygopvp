@@ -7,7 +7,7 @@ from pygopvp.cli.rank import main as rank_func
 from pygopvp.cli.team import main as team_func
 from pygopvp.cli.utils import league, pokename
 from pygopvp.cli.vsall import main as vsall_func
-from pygopvp.gamemaster import _update_dev, _update_miners
+from pygopvp.gamemaster import _update_miners
 from pygopvp.model import Move
 
 
@@ -46,12 +46,8 @@ def battle_main(args):
 
 
 def gamemaster_update(args):
-    if args.source.lower() in ("dev",):
-        _update_dev()
-        print("Gamemaster updated from pokemongo-dev-contrib")
-    else:
-        _update_miners()
-        print("Gamemaster updated from PokeMiners")
+    _update_miners()
+    print("Gamemaster updated from PokeMiners")
 
 
 def shields(s: str):
@@ -129,9 +125,6 @@ def main():
     # gamemaster update
     parser_gmupdate = subparsers.add_parser("gamemaster", help="Update gamemaster")
     parser_gmupdate.set_defaults(func=gamemaster_update)
-    parser_gmupdate.add_argument(
-        "--source", "-s", default="pokeminers", help="Source name", choices=["pokeminers", "dev"]
-    )
     # parse
     args = parser.parse_args()
     if "func" in args:

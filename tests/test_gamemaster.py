@@ -8,7 +8,6 @@ from pygopvp.gamemaster import (
     MOVES,
     SETTINGS,
     TRAINERS,
-    _update_dev,
     _update_miners,
 )
 from pygopvp.model import Type
@@ -74,9 +73,3 @@ class TestGameMasterMiners(unittest.TestCase):
     def test_trainers_ko(self):
         with self.assertRaises(KeyError):
             TRAINERS['undefined']
-
-
-class TestGameMasterDev(TestGameMasterMiners):
-    @classmethod
-    def setUpClass(cls):
-        _update_dev()
